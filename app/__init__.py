@@ -82,7 +82,13 @@ def create_app(config_class=Config):
             print(f"--> Database Connection Warning: {db_err}")
             print("--> Falling back to local SQLite database (vyapar_saarthi_dev.db)...")
             app_obj.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///vyapar_saarthi_dev.db'
-            db.engine.dispose()
+            try:
+                db.engine.dispose()
+            except Exception:
+                pass
+            if 'sqlalchemy' in app_obj.extensions:
+                del app_obj.extensions['sqlalchemy']
+            db.init_app(app_obj)
             db.create_all()
 
         if not app_obj.config.get('TESTING') and app_obj.config.get('SEED_DEMO', True):
