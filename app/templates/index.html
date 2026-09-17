@@ -1,0 +1,3329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Vyapar Saarthi — Your AI Business Companion</title>
+    <meta name="description" content="Voice-first AI business assistant for Indian kirana and small retail stores. Manage billing, inventory, and khata with ease.">
+    <meta name="theme-color" content="#1A6FFF">
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Google Fonts: Plus Jakarta Sans + Noto Sans + Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* ═══════════════════════════════════════════════════
+           VYAPAR SAARTHI DESIGN SYSTEM
+           Primary: #1A6FFF | Orange: #FF6B00 | Green: #00B96B
+           Amber: #F59E0B | Red: #EF4444
+        ═══════════════════════════════════════════════════ */
+        :root {
+            --primary: #1A6FFF;
+            --primary-dark: #1558CC;
+            --primary-light: #EFF6FF;
+            --orange: #FF6B00;
+            --orange-dark: #E05A00;
+            --green: #00B96B;
+            --green-light: #DCFCE7;
+            --amber: #F59E0B;
+            --amber-light: #FEF3C7;
+            --red: #EF4444;
+            --red-light: #FEE2E2;
+            --bg: #F7F8FA;
+            --surface: #FFFFFF;
+            --surface2: #F0F2F6;
+            --border: #E2E8F0;
+            --text: #111827;
+            --text-secondary: #6B7280;
+            --text-muted: #9CA3AF;
+            --radius: 12px;
+            --radius-sm: 8px;
+            --radius-full: 9999px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+            --shadow: 0 2px 8px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06);
+            --sidebar-w: 240px;
+            --bottom-nav-h: 68px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4, h5, h6, .font-headline {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .font-inter { font-family: 'Inter', sans-serif; }
+
+        /* ═══ SIDEBAR (Desktop) ═══════════════════════════════ */
+        .sidebar {
+            position: fixed;
+            left: 0; top: 0; bottom: 0;
+            width: var(--sidebar-w);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 200;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .sidebar-logo {
+            padding: 20px 20px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-logo .logo-icon {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, #3B82F6 100%);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 18px;
+            box-shadow: 0 4px 12px rgba(26,111,255,0.3);
+        }
+
+        .sidebar-logo .brand-name {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 800;
+            font-size: 17px;
+            color: var(--text);
+            line-height: 1.1;
+        }
+
+        .sidebar-logo .brand-tagline {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 12px 12px;
+            overflow-y: auto;
+        }
+
+        .sidebar-nav .nav-section-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            padding: 8px 8px 4px;
+            margin-top: 8px;
+        }
+
+        .sidebar-nav .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .sidebar-nav .nav-item:hover {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .sidebar-nav .nav-item.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .sidebar-nav .nav-item .nav-icon {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px;
+            flex-shrink: 0;
+            background: transparent;
+        }
+
+        .sidebar-nav .nav-item.active .nav-icon {
+            background: rgba(26,111,255,0.12);
+            color: var(--primary);
+        }
+
+        .sidebar-profile {
+            padding: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .sidebar-profile .store-badge {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .store-avatar {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, var(--green) 0%, #10B981 100%);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            color: white;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        /* ═══ MAIN CONTENT AREA ════════════════════════════════ */
+        .main-content {
+            margin-left: var(--sidebar-w);
+            min-height: 100vh;
+            background: var(--bg);
+        }
+
+        /* ═══ TOP HEADER BAR ══════════════════════════════════ */
+        .top-header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 28px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .top-header .greeting {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .top-header .store-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .page-content {
+            padding: 24px 28px;
+        }
+
+        /* ═══ STAT CARDS ════════════════════════════════════════ */
+        .stat-cards-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 18px 20px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .stat-card:hover {
+            box-shadow: var(--shadow);
+            transform: translateY(-1px);
+        }
+
+        .stat-card .stat-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .stat-card .stat-value {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text);
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .stat-card .stat-sub {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-card .stat-icon {
+            position: absolute;
+            right: 16px; top: 16px;
+            width: 40px; height: 40px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+        }
+
+        .stat-card.blue .stat-icon { background: rgba(26,111,255,0.1); color: var(--primary); }
+        .stat-card.purple .stat-icon { background: rgba(139,92,246,0.1); color: #7C3AED; }
+        .stat-card.amber .stat-icon { background: rgba(245,158,11,0.1); color: #D97706; }
+        .stat-card.red .stat-icon { background: rgba(239,68,68,0.1); color: var(--red); }
+        .stat-card.green .stat-icon { background: rgba(0,185,107,0.1); color: var(--green); }
+
+        .stat-card.blue .stat-value { color: var(--primary); }
+        .stat-card.purple .stat-value { color: #7C3AED; }
+        .stat-card.amber .stat-value { color: #D97706; }
+        .stat-card.red .stat-value { color: var(--red); }
+        .stat-card.green .stat-value { color: var(--green); }
+
+        /* ═══ VOICE BILLING HERO BUTTON ════════════════════════ */
+        .voice-hero-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #FF6B00 0%, #FF8C00 60%, #FFA500 100%);
+            border: none;
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 6px 20px rgba(255,107,0,0.35);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .voice-hero-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px rgba(255,107,0,0.45);
+        }
+
+        .voice-hero-btn:active { transform: translateY(0); }
+
+        .voice-hero-btn .mic-circle {
+            width: 56px; height: 56px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+            backdrop-filter: blur(4px);
+        }
+
+        .voice-hero-btn .mic-circle.listening {
+            animation: mic-pulse 1.5s infinite;
+            background: rgba(255,255,255,0.4);
+        }
+
+        @keyframes mic-pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.5); }
+            50% { box-shadow: 0 0 0 16px rgba(255,255,255,0); }
+        }
+
+        .voice-hero-btn .btn-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .voice-hero-btn .btn-sub {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            opacity: 0.85;
+            margin-top: 2px;
+        }
+
+        /* ═══ CARDS ════════════════════════════════════════════ */
+        .card-vs {
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-vs .card-header-vs {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-vs .card-header-vs .card-title-vs {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+            margin: 0;
+        }
+
+        .card-vs .card-body-vs {
+            padding: 16px 20px;
+        }
+
+        /* ═══ BUTTONS ══════════════════════════════════════════ */
+        .btn-vs-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 0 20px;
+            height: 44px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .btn-vs-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+        .btn-vs-primary:active { transform: translateY(0); }
+        .btn-vs-primary:disabled { background: #94a3b8; cursor: not-allowed; transform: none; }
+
+        .btn-vs-secondary {
+            background: var(--surface);
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+            border-radius: var(--radius-sm);
+            padding: 0 20px;
+            height: 44px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s ease;
+        }
+
+        .btn-vs-secondary:hover { background: var(--primary-light); }
+
+        .btn-vs-green {
+            background: var(--green);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 0 20px;
+            height: 44px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s ease;
+        }
+        .btn-vs-green:hover { background: #00a35e; }
+
+        .btn-vs-amber {
+            background: var(--amber);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 0 20px;
+            height: 44px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s ease;
+        }
+
+        .btn-vs-danger {
+            background: var(--red);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 0 18px;
+            height: 36px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.15s;
+        }
+        .btn-vs-danger:hover { background: #dc2626; }
+
+        .btn-vs-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 0 14px;
+            height: 36px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s;
+        }
+        .btn-vs-ghost:hover { background: var(--surface2); color: var(--text); }
+
+        .btn-icon {
+            width: 36px; height: 36px;
+            border: 1.5px solid var(--border);
+            background: var(--surface);
+            border-radius: var(--radius-sm);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.15s;
+            font-size: 14px;
+        }
+        .btn-icon:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+        .btn-icon.danger:hover { border-color: var(--red); color: var(--red); background: var(--red-light); }
+
+        /* ═══ BADGES ═══════════════════════════════════════════ */
+        .badge-vs {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: var(--radius-full);
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .badge-vs-green { background: var(--green-light); color: #16A34A; }
+        .badge-vs-amber { background: var(--amber-light); color: #D97706; }
+        .badge-vs-red { background: var(--red-light); color: #DC2626; }
+        .badge-vs-blue { background: var(--primary-light); color: var(--primary); }
+        .badge-vs-purple { background: #F3F0FF; color: #7C3AED; }
+        .badge-vs-gray { background: var(--surface2); color: var(--text-secondary); }
+
+        /* ═══ INPUTS ════════════════════════════════════════════ */
+        .input-vs {
+            width: 100%;
+            height: 48px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Noto Sans', sans-serif;
+            font-size: 14px;
+            padding: 0 14px;
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .input-vs:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26,111,255,0.12);
+            background: var(--surface);
+        }
+
+        .input-vs::placeholder { color: var(--text-muted); }
+
+        .select-vs {
+            width: 100%;
+            height: 48px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Noto Sans', sans-serif;
+            font-size: 14px;
+            padding: 0 14px;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.15s;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+        }
+
+        .select-vs:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26,111,255,0.12);
+        }
+
+        .label-vs {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .label-vs .required { color: var(--red); margin-left: 2px; }
+
+        .form-group-vs { margin-bottom: 16px; }
+
+        .input-group-vs {
+            display: flex;
+            gap: 0;
+        }
+
+        .input-group-vs .input-vs {
+            border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+            flex: 1;
+        }
+
+        .input-group-vs .btn-vs-primary {
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            flex-shrink: 0;
+        }
+
+        /* ═══ SEARCH BAR ════════════════════════════════════════ */
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .search-bar:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26,111,255,0.12);
+        }
+
+        .search-bar .search-icon {
+            padding: 0 12px 0 14px;
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        .search-bar input {
+            border: none;
+            background: transparent;
+            height: 44px;
+            flex: 1;
+            font-family: 'Noto Sans', sans-serif;
+            font-size: 14px;
+            color: var(--text);
+            outline: none;
+            padding-right: 14px;
+        }
+
+        .search-bar input::placeholder { color: var(--text-muted); }
+
+        /* ═══ TABLES ════════════════════════════════════════════ */
+        .table-vs {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .table-vs th {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            padding: 10px 16px;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .table-vs td {
+            padding: 12px 16px;
+            font-size: 14px;
+            color: var(--text);
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        .table-vs tr:last-child td { border-bottom: none; }
+
+        .table-vs tbody tr:hover td { background: #FAFBFF; }
+
+        .table-vs .product-name {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .table-vs .product-brand {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        /* ═══ SECTION LAYOUT ════════════════════════════════════ */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .section-header h2 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+            margin: 0;
+        }
+
+        /* ═══ TABS ══════════════════════════════════════════════ */
+        .tabs-vs {
+            display: flex;
+            gap: 4px;
+            background: var(--surface2);
+            border-radius: var(--radius-sm);
+            padding: 4px;
+            margin-bottom: 20px;
+        }
+
+        .tabs-vs .tab-btn {
+            flex: 1;
+            height: 38px;
+            border: none;
+            border-radius: 7px;
+            background: transparent;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+
+        .tabs-vs .tab-btn.active {
+            background: var(--surface);
+            color: var(--primary);
+            font-weight: 600;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* ═══ QUICK ACTIONS ═════════════════════════════════════ */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .quick-action-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quick-action-btn:hover {
+            box-shadow: var(--shadow);
+            transform: translateY(-2px);
+            border-color: transparent;
+        }
+
+        .quick-action-btn .qa-icon {
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+        }
+
+        .quick-action-btn .qa-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .qa-blue { background: var(--primary-light); color: var(--primary); }
+        .qa-green { background: var(--green-light); color: var(--green); }
+        .qa-purple { background: #F3F0FF; color: #7C3AED; }
+        .qa-indigo { background: #EEF2FF; color: #4F46E5; }
+
+        /* ═══ BILLING AREA ══════════════════════════════════════ */
+        .billing-layout {
+            display: grid;
+            grid-template-columns: 55% 45%;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .mic-btn-large {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--orange) 0%, #FF8C00 100%);
+            border: none;
+            color: white;
+            font-size: 32px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(255,107,0,0.4);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .mic-btn-large:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 28px rgba(255,107,0,0.55);
+        }
+
+        .mic-btn-large.listening {
+            background: linear-gradient(135deg, #EF4444 0%, #F97316 100%);
+            animation: listening-pulse 1.5s infinite;
+        }
+
+        @keyframes listening-pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.5); }
+            50% { box-shadow: 0 0 0 20px rgba(239,68,68,0); }
+        }
+
+        @keyframes mic-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
+
+        .voice-input-area {
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: text;
+            transition: border-color 0.15s;
+            margin-bottom: 12px;
+        }
+
+        .voice-input-area:focus-within {
+            border-color: var(--primary);
+            background: var(--surface);
+        }
+
+        .voice-input-area input {
+            border: none;
+            background: transparent;
+            flex: 1;
+            font-family: 'Noto Sans', sans-serif;
+            font-size: 14px;
+            color: var(--text);
+            outline: none;
+        }
+
+        .voice-input-area input::placeholder { color: var(--text-muted); }
+
+        /* ═══ BILL PREVIEW ══════════════════════════════════════ */
+        .bill-item-row {
+            display: grid;
+            grid-template-columns: 1fr 80px 80px 80px;
+            gap: 8px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            align-items: center;
+        }
+
+        .bill-item-row:last-child { border-bottom: none; }
+
+        .bill-item-name {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 600;
+        }
+
+        .bill-total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0 8px;
+            border-top: 2px solid var(--border);
+            margin-top: 8px;
+        }
+
+        .bill-total-row .total-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .bill-total-row .total-value {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--green);
+        }
+
+        /* ═══ CLARIFICATION BOX ═════════════════════════════════ */
+        .clarify-box {
+            background: #FFF7E6;
+            border: 1px solid var(--amber);
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            margin-bottom: 14px;
+        }
+
+        .clarify-box .clarify-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: #D97706;
+            margin-bottom: 6px;
+        }
+
+        .clarify-box .clarify-q {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .clarify-candidates {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .clarify-btn {
+            background: white;
+            border: 1.5px solid var(--amber);
+            border-radius: var(--radius-full);
+            padding: 4px 14px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: #92400E;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .clarify-btn:hover {
+            background: var(--amber);
+            color: white;
+        }
+
+        /* ═══ CHAT (AI ASSISTANT) ═══════════════════════════════ */
+        .chat-window {
+            height: 340px;
+            overflow-y: auto;
+            padding: 12px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chat-bubble {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .chat-bubble-ai {
+            background: var(--primary-light);
+            color: var(--text);
+            border-bottom-left-radius: 4px;
+            align-self: flex-start;
+        }
+
+        .chat-bubble-user {
+            background: var(--primary);
+            color: white;
+            border-bottom-right-radius: 4px;
+            align-self: flex-end;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .chat-suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .chat-suggest-chip {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-full);
+            padding: 5px 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .chat-suggest-chip:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* ═══ CUSTOMER CARDS ════════════════════════════════════ */
+        .customer-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: box-shadow 0.15s;
+        }
+
+        .customer-card:hover { box-shadow: var(--shadow); }
+
+        .customer-avatar {
+            width: 44px; height: 44px;
+            background: linear-gradient(135deg, var(--primary) 0%, #3B82F6 100%);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            color: white;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .customer-info { flex: 1; min-width: 0; }
+
+        .customer-name {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .customer-phone {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .customer-balance {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 16px;
+            font-weight: 800;
+            color: #D97706;
+            text-align: right;
+        }
+
+        .customer-balance.paid { color: var(--green); }
+
+        /* ═══ TOASTS ════════════════════════════════════════════ */
+        .toast-container-vs {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast-vs {
+            background: #1F2937;
+            color: white;
+            border-radius: var(--radius);
+            padding: 12px 18px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow-lg);
+            animation: toast-in 0.3s ease;
+            max-width: 380px;
+        }
+
+        .toast-vs.success { background: #064E3B; }
+        .toast-vs.error { background: #7F1D1D; }
+        .toast-vs.info { background: #1E3A8A; }
+
+        @keyframes toast-in {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* ═══ EMPTY STATE ═══════════════════════════════════════ */
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+        }
+
+        .empty-state .empty-icon {
+            width: 72px; height: 72px;
+            background: var(--bg);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 16px;
+            border: 1px solid var(--border);
+        }
+
+        .empty-state h4 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            max-width: 280px;
+            margin-left: auto; margin-right: auto;
+        }
+
+        /* ═══ MODALS ════════════════════════════════════════════ */
+        .modal-content-vs {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-header-vs {
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header-vs h5 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text);
+            margin: 0;
+        }
+
+        .modal-body-vs {
+            padding: 22px;
+            max-height: 65vh;
+            overflow-y: auto;
+        }
+
+        .modal-footer-vs {
+            padding: 16px 22px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .close-btn {
+            width: 32px; height: 32px;
+            border: none;
+            background: var(--surface2);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        .close-btn:hover { background: var(--border); }
+
+        /* Form section labels */
+        .form-section-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            padding: 4px 0 8px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 14px;
+            margin-top: 8px;
+        }
+
+        .form-row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        /* ═══ BOTTOM NAV (Mobile only) ══════════════════════════ */
+        .bottom-nav {
+            display: none;
+        }
+
+        /* ═══ RESPONSIVE ════════════════════════════════════════ */
+        @media (max-width: 991px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; padding-bottom: var(--bottom-nav-h); }
+            .top-header { padding: 12px 16px; }
+            .page-content { padding: 16px; }
+            .stat-cards-row { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .billing-layout { grid-template-columns: 1fr; }
+            .quick-actions { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+
+            .bottom-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0; left: 0; right: 0;
+                height: var(--bottom-nav-h);
+                background: var(--surface);
+                border-top: 1px solid var(--border);
+                z-index: 500;
+                box-shadow: 0 -4px 16px rgba(0,0,0,0.06);
+            }
+
+            .bottom-nav .bnav-item {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 4px;
+                cursor: pointer;
+                padding: 8px 4px;
+                transition: color 0.15s;
+                color: var(--text-muted);
+                font-family: 'Inter', sans-serif;
+                font-size: 10px;
+                font-weight: 600;
+                border: none;
+                background: transparent;
+            }
+
+            .bottom-nav .bnav-item .bnav-icon {
+                font-size: 20px;
+                line-height: 1;
+            }
+
+            .bottom-nav .bnav-item.active {
+                color: var(--primary);
+            }
+
+            .bottom-nav .bnav-item.billing-fab {
+                color: white;
+            }
+
+            .bottom-nav .bnav-item.billing-fab .bnav-icon {
+                width: 50px; height: 50px;
+                background: linear-gradient(135deg, var(--orange) 0%, #FF8C00 100%);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 4px 16px rgba(255,107,0,0.4);
+                margin-top: -8px;
+                font-size: 22px;
+            }
+
+            .voice-hero-btn { padding: 16px 18px; }
+            .voice-hero-btn .btn-title { font-size: 16px; }
+            .form-row-2 { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 576px) {
+            .stat-cards-row { grid-template-columns: repeat(2, 1fr); }
+            .quick-actions { grid-template-columns: repeat(2, 1fr); }
+            .stat-card .stat-value { font-size: 22px; }
+            .top-header .greeting { font-size: 16px; }
+        }
+
+        /* ═══ SECTION VISIBILITY ════════════════════════════════ */
+        .app-section { display: none; }
+        .app-section.active { display: block; }
+
+        /* ═══ FILTER CHIPS ══════════════════════════════════════ */
+        .filter-chips {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            padding: 5px 14px;
+            border-radius: var(--radius-full);
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1.5px solid var(--border);
+            background: var(--surface);
+            color: var(--text-secondary);
+            transition: all 0.15s;
+        }
+
+        .filter-chip.active, .filter-chip:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* ═══ LOADING ═══════════════════════════════════════════ */
+        .loading-dots::after {
+            content: '...';
+            animation: dots 1.2s infinite;
+        }
+
+        @keyframes dots {
+            0% { content: '.'; }
+            33% { content: '..'; }
+            66% { content: '...'; }
+        }
+
+        /* ═══ DIVIDERS ══════════════════════════════════════════ */
+        .divider-vs {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 16px 0;
+        }
+
+        /* ═══ STATS STRIP ═══════════════════════════════════════ */
+        .stats-strip {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══ SIDEBAR (Desktop) ═════════════════════════════════════ -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="d-flex align-items-center gap-3">
+                <div class="logo-icon"><i class="fa-solid fa-shop"></i></div>
+                <div>
+                    <div class="brand-name">Vyapar Saarthi</div>
+                    <div class="brand-tagline">Your AI Business Companion</div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">Main</div>
+            <a class="nav-item active" onclick="showSection('dashboard')" href="#">
+                <div class="nav-icon"><i class="fa-solid fa-house"></i></div>
+                Dashboard
+            </a>
+            <a class="nav-item" onclick="showSection('billing')" href="#">
+                <div class="nav-icon"><i class="fa-solid fa-microphone"></i></div>
+                Voice Billing
+            </a>
+            <a class="nav-item" onclick="showSection('inventory')" href="#">
+                <div class="nav-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+                Inventory
+            </a>
+            <a class="nav-item" onclick="showSection('khata')" href="#">
+                <div class="nav-icon"><i class="fa-solid fa-address-book"></i></div>
+                Customers / Khata
+            </a>
+            <div class="nav-section-label">Insights</div>
+            <a class="nav-item" onclick="showSection('sales')" href="#">
+                <div class="nav-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                Sales History
+            </a>
+            <a class="nav-item" onclick="showSection('assistant')" href="#">
+                <div class="nav-icon"><i class="fa-solid fa-star-of-life"></i></div>
+                AI Assistant
+            </a>
+        </nav>
+
+        <div class="sidebar-profile">
+            <div class="store-badge">
+                <div class="store-avatar">KK</div>
+                <div>
+                    <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;color:var(--text);" id="store-name-display">Karvenagar Kirana</div>
+                    <div style="font-family:'Inter',sans-serif;font-size:11px;color:var(--text-secondary);" id="user-role-badge">Owner</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ═══ MAIN CONTENT ══════════════════════════════════════════ -->
+    <main class="main-content">
+
+        <!-- TOP HEADER -->
+        <div class="top-header">
+            <div>
+                <div class="greeting">Good morning, Ramesh! 👋</div>
+                <div class="store-label"><i class="fa-solid fa-location-dot me-1" style="color:var(--primary)"></i>Karvenagar Kirana, Pune</div>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn-ghost" onclick="autoLoginOwner()" style="background:var(--surface2);border:none;border-radius:8px;padding:8px 14px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:var(--text-secondary);cursor:pointer;" title="Refresh Data">
+                    <i class="fa-solid fa-arrows-rotate me-1"></i> Refresh
+                </button>
+            </div>
+        </div>
+
+        <!-- PAGE CONTENT -->
+        <div class="page-content">
+
+            <!-- ══════════════════════════════════════════════════
+                 SECTION: DASHBOARD
+            ══════════════════════════════════════════════════ -->
+            <div id="section-dashboard" class="app-section active">
+
+                <!-- Stat Cards -->
+                <div class="stat-cards-row">
+                    <div class="stat-card blue">
+                        <div class="stat-label">Today's Revenue</div>
+                        <div class="stat-value" id="stat-revenue">₹0</div>
+                        <div class="stat-sub"><i class="fa-solid fa-arrow-trend-up" style="color:var(--green)"></i> Live aggregate</div>
+                        <div class="stat-icon"><i class="fa-solid fa-rupee-sign"></i></div>
+                    </div>
+                    <div class="stat-card purple">
+                        <div class="stat-label">Bills Today</div>
+                        <div class="stat-value" id="stat-txns">0</div>
+                        <div class="stat-sub"><i class="fa-solid fa-receipt"></i> Confirmed bills</div>
+                        <div class="stat-icon"><i class="fa-solid fa-receipt"></i></div>
+                    </div>
+                    <div class="stat-card amber">
+                        <div class="stat-label">Pending Khata</div>
+                        <div class="stat-value" id="stat-udhaar">₹0</div>
+                        <div class="stat-sub"><i class="fa-solid fa-book-open"></i> Outstanding udhaar</div>
+                        <div class="stat-icon"><i class="fa-solid fa-book-open"></i></div>
+                    </div>
+                    <div class="stat-card red">
+                        <div class="stat-label">Low Stock Alerts</div>
+                        <div class="stat-value" id="stat-alerts">0</div>
+                        <div class="stat-sub"><i class="fa-solid fa-triangle-exclamation"></i> Items need reorder</div>
+                        <div class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    </div>
+                </div>
+
+                <!-- Voice Billing Hero -->
+                <button class="voice-hero-btn" onclick="showSection('billing')">
+                    <div class="mic-circle">
+                        <i class="fa-solid fa-microphone"></i>
+                    </div>
+                    <div>
+                        <div class="btn-title">🎤 Start Voice Billing</div>
+                        <div class="btn-sub">Speak in Hindi, English, or Marathi — e.g. "2 packet fortune oil aur 1 aata do"</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right ms-auto" style="opacity:0.6;font-size:18px"></i>
+                </button>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <div class="quick-action-btn" onclick="showAddProductModal()">
+                        <div class="qa-icon qa-blue"><i class="fa-solid fa-plus"></i></div>
+                        <div class="qa-label">Add Product</div>
+                    </div>
+                    <div class="quick-action-btn" onclick="showSection('inventory')">
+                        <div class="qa-icon qa-green"><i class="fa-solid fa-boxes-stacked"></i></div>
+                        <div class="qa-label">Inventory</div>
+                    </div>
+                    <div class="quick-action-btn" onclick="showSection('khata')">
+                        <div class="qa-icon qa-purple"><i class="fa-solid fa-address-book"></i></div>
+                        <div class="qa-label">Khata</div>
+                    </div>
+                    <div class="quick-action-btn" onclick="showSection('assistant')">
+                        <div class="qa-icon qa-indigo"><i class="fa-solid fa-star-of-life"></i></div>
+                        <div class="qa-label">Ask AI</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ══════════════════════════════════════════════════
+                 SECTION: VOICE BILLING
+            ══════════════════════════════════════════════════ -->
+            <div id="section-billing" class="app-section">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-microphone me-2" style="color:var(--orange)"></i>Voice Billing</h2>
+                </div>
+
+                <div class="billing-layout">
+                    <!-- Left: Voice Input -->
+                    <div>
+                        <div class="card-vs mb-4">
+                            <div class="card-header-vs">
+                                <h5 class="card-title-vs"><i class="fa-solid fa-microphone text-orange me-2" style="color:var(--orange)"></i>Voice Terminal</h5>
+                                <button id="voice-lang-toggle" onclick="toggleSpeechLang()" class="badge-vs badge-vs-blue" style="border:none;cursor:pointer" title="Click to toggle voice recognition language">🌐 HI (Hindi)</button>
+                            </div>
+                            <div class="card-body-vs text-center">
+                                <p style="font-size:13px;color:var(--text-secondary);margin-bottom:20px;">Tap the microphone and speak your order clearly</p>
+
+                                <button id="mic-btn" class="mic-btn-large" onclick="toggleVoiceRecording()">
+                                    <i class="fa-solid fa-microphone" id="mic-icon"></i>
+                                </button>
+
+                                <!-- DONE button: visible only while listening -->
+                                <div class="d-none" id="mic-done-btn" style="margin-top:12px;">
+                                    <button onclick="stopAndProcessVoice()" style="background:var(--red);color:white;border:none;border-radius:var(--radius-full);padding:8px 24px;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(239,68,68,0.35);">
+                                        <i class="fa-solid fa-stop"></i> Done Listening
+                                    </button>
+                                </div>
+
+                                <div id="recording-status" style="font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:var(--text-secondary);margin-top:14px;margin-bottom:14px;">Tap mic to start speaking</div>
+
+                                <!-- Text Input Alternative -->
+                                <div class="voice-input-area">
+                                    <i class="fa-solid fa-keyboard" style="color:var(--text-muted);font-size:15px"></i>
+                                    <input type="text" id="voice-input-text" placeholder='Or type here (e.g. "2 packet fortune oil aur 1 packet aata do")' onkeydown="if(event.key==='Enter')processVoiceInputText()">
+                                    <button onclick="processVoiceInputText()" style="background:var(--primary);border:none;border-radius:6px;width:32px;height:32px;color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                        <i class="fa-solid fa-paper-plane" style="font-size:13px"></i>
+                                    </button>
+                                </div>
+
+                                <div class="d-flex gap-2 justify-content-center flex-wrap">
+                                    <button class="filter-chip" onclick="setQuickVoice('2 packet fortune oil aur 1 packet aata do')">Try: "2 packet fortune oil aur 1 packet aata do"</button>
+                                    <button class="filter-chip" onclick="setQuickVoice('1 packet oil do')">Try Ambiguous: "1 packet oil do"</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Active Bill -->
+                    <div>
+                        <div class="card-vs">
+                            <div class="card-header-vs">
+                                <h5 class="card-title-vs"><i class="fa-solid fa-cart-shopping me-2" style="color:var(--green)"></i>Active Draft Bill</h5>
+                                <span class="badge-vs badge-vs-blue font-inter" id="draft-id-badge" style="font-size:11px">No Draft</span>
+                            </div>
+                            <div class="card-body-vs">
+
+                                <!-- Clarification Box -->
+                                <div id="clarification-box" class="clarify-box d-none">
+                                    <div class="clarify-title"><i class="fa-solid fa-circle-question me-1"></i> AI Clarification Needed</div>
+                                    <p id="clarification-question" class="clarify-q"></p>
+                                    <div id="clarification-candidates" class="clarify-candidates"></div>
+                                </div>
+
+                                <!-- Bill Items -->
+                                <div id="bill-items-container" style="min-height:120px">
+                                    <div id="bill-empty-state" class="empty-state" style="padding:32px 16px;">
+                                        <div class="empty-icon" style="width:52px;height:52px;font-size:24px;">🛒</div>
+                                        <h4 style="font-size:14px;margin-bottom:4px;">No items yet</h4>
+                                        <p style="font-size:12px;margin-bottom:0">Speak or type your order on the left to add items</p>
+                                    </div>
+                                    <div id="bill-items-list" class="d-none">
+                                        <!-- Header row -->
+                                        <div style="display:grid;grid-template-columns:1fr 72px 72px 72px;gap:8px;padding:0 0 8px;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-secondary);border-bottom:1px solid var(--border);">
+                                            <span>Item</span><span>Qty</span><span>Price</span><span style="text-align:right">Total</span>
+                                        </div>
+                                        <div id="cart-items-body"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Total Row -->
+                                <div class="bill-total-row">
+                                    <span class="total-label">Grand Total</span>
+                                    <span class="total-value" id="cart-total-display">₹0.00</span>
+                                </div>
+
+                                <!-- Customer Select -->
+                                <div class="form-group-vs">
+                                    <label class="label-vs">Customer (Required for Udhaar)</label>
+                                    <select id="bill-customer-select" class="select-vs">
+                                        <option value="">— Cash / Walk-in Sale —</option>
+                                    </select>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="d-flex gap-2">
+                                    <button id="btn-confirm-paid" class="btn-vs-green" style="flex:1;justify-content:center;height:48px;" onclick="confirmCurrentBill('paid')" disabled>
+                                        <i class="fa-solid fa-check-circle"></i> Cash Paid
+                                    </button>
+                                    <button id="btn-confirm-udhaar" class="btn-vs-amber" style="flex:1;justify-content:center;height:48px;" onclick="confirmCurrentBill('udhaar')" disabled>
+                                        <i class="fa-solid fa-book-bookmark"></i> Add to Udhaar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════════════
+                 SECTION: INVENTORY
+            ══════════════════════════════════════════════════ -->
+            <div id="section-inventory" class="app-section">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-boxes-stacked me-2" style="color:var(--green)"></i>Inventory</h2>
+                    <div class="d-flex gap-2">
+                        <button class="btn-vs-secondary" onclick="showCsvImportModal()">
+                            <i class="fa-solid fa-file-csv"></i> Import CSV
+                        </button>
+                        <button class="btn-vs-primary" onclick="showAddProductModal()">
+                            <i class="fa-solid fa-plus"></i> Add Product
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Strip -->
+                <div class="stats-strip" id="inv-stats-strip">
+                    <span class="badge-vs badge-vs-blue" style="padding:6px 14px;font-size:12px"><i class="fa-solid fa-boxes-stacked me-1"></i> Total: <span id="inv-total-count">—</span></span>
+                    <span class="badge-vs badge-vs-amber" style="padding:6px 14px;font-size:12px"><i class="fa-solid fa-triangle-exclamation me-1"></i> Low Stock: <span id="inv-low-count">—</span></span>
+                    <span class="badge-vs badge-vs-red" style="padding:6px 14px;font-size:12px"><i class="fa-solid fa-circle-xmark me-1"></i> Out of Stock: <span id="inv-out-count">—</span></span>
+                </div>
+
+                <div class="card-vs">
+                    <div class="card-header-vs">
+                        <div class="search-bar" style="max-width:340px;flex:1">
+                            <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                            <input type="text" id="inventory-search-input" placeholder="Search products, brands, SKU..." onkeydown="if(event.key==='Enter')loadInventory()">
+                        </div>
+                        <button class="btn-vs-ghost" onclick="loadInventory()"><i class="fa-solid fa-rotate"></i></button>
+                    </div>
+
+                    <div style="overflow-x:auto">
+                        <table class="table-vs" id="inventory-table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventory-table-body">
+                                <tr>
+                                    <td colspan="5">
+                                        <div class="empty-state">
+                                            <div class="empty-icon">📦</div>
+                                            <h4>No products yet</h4>
+                                            <p>Add your first product to start billing faster</p>
+                                            <button class="btn-vs-primary" onclick="showAddProductModal()"><i class="fa-solid fa-plus"></i> Add Product</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════════════
+                 SECTION: KHATA / CUSTOMERS
+            ══════════════════════════════════════════════════ -->
+            <div id="section-khata" class="app-section">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-address-book me-2" style="color:#7C3AED"></i>Customers / Khata</h2>
+                    <button class="btn-vs-primary" onclick="showAddCustomerModal()">
+                        <i class="fa-solid fa-user-plus"></i> Add Customer
+                    </button>
+                </div>
+
+                <!-- Outstanding summary card -->
+                <div class="stat-card amber mb-4" style="max-width:320px">
+                    <div class="stat-label">Total Outstanding</div>
+                    <div class="stat-value" id="khata-total-outstanding">₹0</div>
+                    <div class="stat-sub"><i class="fa-solid fa-book"></i> Across all customers</div>
+                    <div class="stat-icon"><i class="fa-solid fa-book-open"></i></div>
+                </div>
+
+                <div class="card-vs">
+                    <div class="card-header-vs">
+                        <div class="search-bar" style="max-width:300px">
+                            <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                            <input type="text" placeholder="Search customer name...">
+                        </div>
+                    </div>
+                    <div class="card-body-vs" style="padding-top:8px">
+                        <div id="khata-customers-list">
+                            <div class="empty-state">
+                                <div class="empty-icon">👤</div>
+                                <h4>No customers yet</h4>
+                                <p>Add customers to start managing Khata and track udhaar</p>
+                                <button class="btn-vs-primary" onclick="showAddCustomerModal()"><i class="fa-solid fa-user-plus"></i> Add Customer</button>
+                            </div>
+                        </div>
+                        <div id="khata-table-body" class="d-none"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════════════
+                 SECTION: AI ASSISTANT
+            ══════════════════════════════════════════════════ -->
+            <div id="section-assistant" class="app-section">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-star-of-life me-2" style="color:var(--primary)"></i>Vyapar Saarthi AI</h2>
+                </div>
+
+                <div class="card-vs" style="max-width:720px">
+                    <div class="card-header-vs" style="flex-direction:column;align-items:flex-start;gap:4px">
+                        <h5 class="card-title-vs">AI Business Assistant</h5>
+                        <p style="font-size:13px;color:var(--text-secondary);margin:0">Ask anything about your business in Hindi or English</p>
+                    </div>
+                    <div class="card-body-vs">
+                        <div class="chat-suggestions">
+                            <button class="chat-suggest-chip" onclick="askAI('Aaj ka total sale kitna hua?')">Today's sales?</button>
+                            <button class="chat-suggest-chip" onclick="askAI('Kaunsa item low stock mein hai?')">Low stock items</button>
+                            <button class="chat-suggest-chip" onclick="askAI('Rahul ka kitna udhaar hai?')">Customer balance</button>
+                            <button class="chat-suggest-chip" onclick="askAI('Is week ki best selling product kaunsi hai?')">Top products</button>
+                        </div>
+
+                        <div id="chat-window" class="chat-window">
+                            <div class="chat-bubble chat-bubble-ai">
+                                🙏 Namaste! Main aapka Vyapar Saarthi AI assistant hoon. Aap mujhse store sales, low stock, ya customer udhaar ke baare mein kuch bhi pooch sakte hain!
+                            </div>
+                        </div>
+
+                        <hr class="divider-vs">
+
+                        <div class="input-group-vs">
+                            <input type="text" id="assistant-input-text" class="input-vs" placeholder='Ask e.g. "Aaj ka total sale kitna hua?"' onkeydown="if(event.key==='Enter')submitAssistantQuery()">
+                            <button class="btn-vs-primary" onclick="submitAssistantQuery()" style="border-radius:0 var(--radius-sm) var(--radius-sm) 0">
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════════════
+                 SECTION: SALES HISTORY
+            ══════════════════════════════════════════════════ -->
+            <div id="section-sales" class="app-section">
+                <div class="section-header d-flex align-items-center justify-content-between">
+                    <h2><i class="fa-solid fa-clock-rotate-left me-2" style="color:var(--primary)"></i>Sales History</h2>
+                    <button class="btn-vs-secondary" onclick="loadSalesHistory()"><i class="fa-solid fa-rotate me-1"></i>Refresh</button>
+                </div>
+
+                <div class="card-vs">
+                    <div class="card-body-vs p-0">
+                        <div class="table-responsive">
+                            <table class="table-vs" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Invoice #</th>
+                                        <th>Date & Time</th>
+                                        <th>Customer</th>
+                                        <th>Items</th>
+                                        <th>Status</th>
+                                        <th>Total</th>
+                                        <th>Receipt</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sales-history-tbody">
+                                    <tr><td colspan="7" class="text-center p-4">Loading sales history...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- /page-content -->
+    </main>
+
+    <!-- ═══ BOTTOM NAV (Mobile) ═══════════════════════════════════ -->
+    <nav class="bottom-nav">
+        <button class="bnav-item active" onclick="showSection('dashboard')" id="bnav-dashboard">
+            <span class="bnav-icon"><i class="fa-solid fa-house"></i></span>
+            Home
+        </button>
+        <button class="bnav-item" onclick="showSection('inventory')" id="bnav-inventory">
+            <span class="bnav-icon"><i class="fa-solid fa-boxes-stacked"></i></span>
+            Inventory
+        </button>
+        <button class="bnav-item billing-fab" onclick="showSection('billing')" id="bnav-billing">
+            <span class="bnav-icon"><i class="fa-solid fa-microphone"></i></span>
+            Billing
+        </button>
+        <button class="bnav-item" onclick="showSection('khata')" id="bnav-khata">
+            <span class="bnav-icon"><i class="fa-solid fa-address-book"></i></span>
+            Khata
+        </button>
+        <button class="bnav-item" onclick="showSection('sales')" id="bnav-sales">
+            <span class="bnav-icon"><i class="fa-solid fa-clock-rotate-left"></i></span>
+            History
+        </button>
+        <button class="bnav-item" onclick="showSection('assistant')" id="bnav-assistant">
+            <span class="bnav-icon"><i class="fa-solid fa-star-of-life"></i></span>
+            AI
+        </button>
+    </nav>
+
+    <!-- ═══ TOAST CONTAINER ═══════════════════════════════════════ -->
+    <div class="toast-container-vs" id="toast-container"></div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         MODALS
+    ══════════════════════════════════════════════════════════ -->
+
+    <!-- Add Product Modal -->
+    <div class="modal fade" id="modalAddProduct" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content-vs modal-content border-0">
+                <div class="modal-header-vs">
+                    <h5><i class="fa-solid fa-plus-circle me-2" style="color:var(--primary)"></i>Add New Product</h5>
+                    <button class="close-btn" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body-vs">
+                    <div class="form-section-label">Basic Information</div>
+                    <div class="form-group-vs">
+                        <label class="label-vs">Product Name <span class="required">*</span></label>
+                        <input type="text" id="new-prod-name" class="input-vs" placeholder="e.g. Tata Salt 1kg">
+                    </div>
+                    <div class="form-row-2">
+                        <div class="form-group-vs">
+                            <label class="label-vs">Brand</label>
+                            <input type="text" id="new-prod-brand" class="input-vs" placeholder="e.g. Tata">
+                        </div>
+                        <div class="form-group-vs">
+                            <label class="label-vs">Category</label>
+                            <input type="text" id="new-prod-category" class="input-vs" placeholder="e.g. Groceries">
+                        </div>
+                    </div>
+
+                    <div class="form-section-label">Pricing</div>
+                    <div class="form-row-2">
+                        <div class="form-group-vs">
+                            <label class="label-vs">Selling Price (₹) <span class="required">*</span></label>
+                            <input type="number" id="new-prod-price" class="input-vs" placeholder="e.g. 28" min="0" step="0.01">
+                        </div>
+                        <div class="form-group-vs">
+                            <label class="label-vs">Cost Price (₹)</label>
+                            <input type="number" id="new-prod-cost" class="input-vs" placeholder="e.g. 22" min="0" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="form-section-label">Stock</div>
+                    <div class="form-row-2">
+                        <div class="form-group-vs">
+                            <label class="label-vs">Unit <span class="required">*</span></label>
+                            <select id="new-prod-unit" class="select-vs">
+                                <option value="piece">Piece</option>
+                                <option value="packet" selected>Packet</option>
+                                <option value="kg">Kg</option>
+                                <option value="gram">Gram</option>
+                                <option value="litre">Litre</option>
+                                <option value="ml">ml</option>
+                                <option value="box">Box</option>
+                                <option value="dozen">Dozen</option>
+                            </select>
+                        </div>
+                        <div class="form-group-vs">
+                            <label class="label-vs">Current Stock <span class="required">*</span></label>
+                            <input type="number" id="new-prod-stock" class="input-vs" value="10" min="0" placeholder="e.g. 40">
+                        </div>
+                    </div>
+                    <div class="form-row-2">
+                        <div class="form-group-vs">
+                            <label class="label-vs">Low Stock Alert</label>
+                            <input type="number" id="new-prod-threshold" class="input-vs" value="2" min="0" placeholder="e.g. 5">
+                        </div>
+                        <div class="form-group-vs">
+                            <label class="label-vs">SKU</label>
+                            <input type="text" id="new-prod-sku" class="input-vs" placeholder="e.g. PRD-001">
+                        </div>
+                    </div>
+                    <div class="form-row-2">
+                        <div class="form-group-vs">
+                            <label class="label-vs">Barcode</label>
+                            <input type="text" id="new-prod-barcode" class="input-vs" placeholder="e.g. 8901234567890">
+                        </div>
+                        <div class="form-group-vs">
+                            <label class="label-vs">Image URL</label>
+                            <input type="url" id="new-prod-image" class="input-vs" placeholder="https://...">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer-vs">
+                    <button class="btn-vs-ghost" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn-vs-primary" onclick="submitAddProduct()"><i class="fa-solid fa-save me-1"></i>Save Product</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Product Modal -->
+    <div class="modal fade" id="modalEditProduct" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content-vs modal-content border-0">
+                <div class="modal-header-vs">
+                    <h5><i class="fa-solid fa-pen me-2" style="color:var(--primary)"></i>Edit Product</h5>
+                    <button class="close-btn" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body-vs">
+                    <input type="hidden" id="edit-prod-id">
+                    <div class="form-group-vs">
+                        <label class="label-vs">Product Name</label>
+                        <input type="text" id="edit-prod-name" class="input-vs">
+                    </div>
+                    <div class="form-row-2">
+                        <div class="form-group-vs">
+                            <label class="label-vs">Unit</label>
+                            <select id="edit-prod-unit" class="select-vs">
+                                <option value="piece">Piece</option>
+                                <option value="packet">Packet</option>
+                                <option value="kg">Kg</option>
+                                <option value="gram">Gram</option>
+                                <option value="litre">Litre</option>
+                                <option value="ml">ml</option>
+                                <option value="box">Box</option>
+                                <option value="dozen">Dozen</option>
+                            </select>
+                        </div>
+                        <div class="form-group-vs">
+                            <label class="label-vs">Category</label>
+                            <input type="text" id="edit-prod-category" class="input-vs" placeholder="e.g. Groceries">
+                        </div>
+                    </div>
+                    <div class="form-row-2">
+                        <div class="form-group-vs">
+                            <label class="label-vs">Selling Price (₹)</label>
+                            <input type="number" id="edit-prod-price" class="input-vs" min="0" step="0.01">
+                        </div>
+                        <div class="form-group-vs">
+                            <label class="label-vs">Cost Price (₹)</label>
+                            <input type="number" id="edit-prod-cost" class="input-vs" min="0" step="0.01">
+                        </div>
+                    </div>
+                    <div class="form-group-vs">
+                        <label class="label-vs">Brand</label>
+                        <input type="text" id="edit-prod-brand" class="input-vs" placeholder="e.g. Fortune">
+                    </div>
+                    <div class="form-row-2">
+                        <div class="form-group-vs">
+                            <label class="label-vs">Low Stock Alert</label>
+                            <input type="number" id="edit-prod-threshold" class="input-vs" min="0">
+                        </div>
+                        <div class="form-group-vs">
+                            <label class="label-vs">SKU</label>
+                            <input type="text" id="edit-prod-sku" class="input-vs">
+                        </div>
+                    </div>
+                    <div class="form-row-2">
+                        <div class="form-group-vs">
+                            <label class="label-vs">Barcode</label>
+                            <input type="text" id="edit-prod-barcode" class="input-vs">
+                        </div>
+                        <div class="form-group-vs">
+                            <label class="label-vs">Image URL</label>
+                            <input type="url" id="edit-prod-image" class="input-vs">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer-vs">
+                    <button class="btn-vs-ghost" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn-vs-primary" onclick="submitEditProduct()"><i class="fa-solid fa-save me-1"></i>Update Product</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CSV Import Modal -->
+    <div class="modal fade" id="modalCsvImport" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content-vs modal-content border-0">
+                <div class="modal-header-vs">
+                    <h5><i class="fa-solid fa-file-csv me-2" style="color:var(--green)"></i>Import Products via CSV</h5>
+                    <button class="close-btn" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body-vs">
+                    <div class="form-group-vs">
+                        <label class="label-vs">Select CSV File</label>
+                        <input class="input-vs" type="file" id="csvFileInput" accept=".csv" style="height:auto;padding:10px 14px">
+                        <p style="font-size:12px;color:var(--text-muted);margin-top:6px">Columns: name, brand, category, price, cost_price, unit, stock, threshold, sku, barcode</p>
+                    </div>
+                    <div id="csvPreviewArea" class="d-none">
+                        <div class="form-row-2" style="gap:12px;margin-bottom:12px">
+                            <div style="background:var(--green-light);border:1px solid var(--green);border-radius:var(--radius-sm);padding:12px;text-align:center">
+                                <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;color:var(--green)" id="csvValidCount">0</div>
+                                <div style="font-size:12px;color:var(--green);font-weight:600">Valid Rows</div>
+                            </div>
+                            <div style="background:var(--red-light);border:1px solid var(--red);border-radius:var(--radius-sm);padding:12px;text-align:center">
+                                <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;color:var(--red)" id="csvInvalidCount">0</div>
+                                <div style="font-size:12px;color:var(--red);font-weight:600">Invalid Rows</div>
+                            </div>
+                        </div>
+                        <div id="csvErrorsArea" class="d-none">
+                            <p style="font-size:13px;font-weight:600;color:var(--red);margin-bottom:8px">Errors Found:</p>
+                            <ul id="csvErrorList" style="font-size:12px;color:var(--red);max-height:100px;overflow-y:auto;padding-left:18px"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer-vs">
+                    <button class="btn-vs-secondary" onclick="previewCsv()">Preview</button>
+                    <button class="btn-vs-primary" id="btnConfirmImport" onclick="confirmImport()" disabled><i class="fa-solid fa-check me-1"></i>Confirm Import</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Customer Modal -->
+    <div class="modal fade" id="modalAddCustomer" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content-vs modal-content border-0">
+                <div class="modal-header-vs">
+                    <h5><i class="fa-solid fa-user-plus me-2" style="color:#7C3AED"></i>Add Customer</h5>
+                    <button class="close-btn" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body-vs">
+                    <div class="form-group-vs">
+                        <label class="label-vs">Customer Name <span class="required">*</span></label>
+                        <input type="text" id="new-cust-name" class="input-vs" placeholder="e.g. Rahul Patil">
+                    </div>
+                    <div class="form-group-vs">
+                        <label class="label-vs">Phone Number</label>
+                        <input type="text" id="new-cust-phone" class="input-vs" placeholder="e.g. 98765 43210">
+                    </div>
+                </div>
+                <div class="modal-footer-vs">
+                    <button class="btn-vs-ghost" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn-vs-primary" onclick="submitAddCustomer()" style="width:100%"><i class="fa-solid fa-user-plus me-1"></i>Create Customer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Record Payment Modal -->
+    <div class="modal fade" id="modalPayment" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content-vs modal-content border-0">
+                <div class="modal-header-vs">
+                    <h5><i class="fa-solid fa-money-bill-wave me-2" style="color:var(--green)"></i>Record Udhaar Payment</h5>
+                    <button class="close-btn" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body-vs">
+                    <input type="hidden" id="pay-cust-id">
+                    <div style="background:var(--amber-light);border:1px solid var(--amber);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:16px">
+                        <span style="font-size:13px;color:#92400E;font-weight:500">Recording payment for: </span>
+                        <strong id="pay-cust-name" style="color:#D97706"></strong>
+                    </div>
+                    <div class="form-group-vs">
+                        <label class="label-vs">Amount Paid (₹) <span class="required">*</span></label>
+                        <input type="number" id="pay-amount" class="input-vs" placeholder="e.g. 100" min="0">
+                    </div>
+                </div>
+                <div class="modal-footer-vs">
+                    <button class="btn-vs-ghost" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn-vs-green" onclick="submitRecordPayment()" style="width:100%;justify-content:center;height:48px"><i class="fa-solid fa-check-circle me-1"></i>Record Payment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pre-Checkout Read-Back Confirmation Modal -->
+    <div class="modal fade" id="modalReadbackConfirm" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content-vs modal-content border-0">
+                <div class="modal-header-vs">
+                    <h5><i class="fa-solid fa-volume-high me-2" style="color:var(--primary)"></i>Bill Read-Back & Verification</h5>
+                    <button class="close-btn" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body-vs">
+                    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:10px">
+                        Please review the spoken read-back before confirming checkout:
+                    </p>
+                    <div id="readback-speech-text-box" style="background:var(--card-hover-bg);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:12px 14px;font-size:13px;line-height:1.5;color:var(--text);margin-bottom:14px;font-weight:500">
+                    </div>
+                    <div id="readback-items-breakdown" style="max-height:180px;overflow-y:auto;margin-bottom:12px">
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--border-color)">
+                        <span style="font-weight:600;color:var(--text-secondary)">Total Amount:</span>
+                        <span id="readback-total-display" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;color:var(--green)">₹0.00</span>
+                    </div>
+                </div>
+                <div class="modal-footer-vs">
+                    <button class="btn-vs-ghost" data-bs-dismiss="modal">Edit Cart</button>
+                    <button class="btn-vs-green" id="btn-execute-checkout" onclick="proceedWithConfirmedCheckout()" style="height:48px;padding:0 20px;font-weight:700">
+                        <i class="fa-solid fa-check-circle me-1"></i>Confirm & Complete Sale
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         SCRIPTS
+    ══════════════════════════════════════════════════════════ -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        /* ═══ NAVIGATION ═════════════════════════════════════════ */
+        function showSection(section) {
+            // Hide all sections
+            document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
+            // Show target
+            const target = document.getElementById('section-' + section);
+            if (target) target.classList.add('active');
+
+            // Update sidebar nav
+            document.querySelectorAll('.sidebar-nav .nav-item').forEach(n => n.classList.remove('active'));
+            const sidebarLinks = document.querySelectorAll('.sidebar-nav .nav-item');
+            sidebarLinks.forEach(l => {
+                if (l.getAttribute('onclick') && l.getAttribute('onclick').includes("'" + section + "'")) {
+                    l.classList.add('active');
+                }
+            });
+
+            // Update bottom nav
+            document.querySelectorAll('.bnav-item').forEach(n => n.classList.remove('active'));
+            const bnav = document.getElementById('bnav-' + section);
+            if (bnav) bnav.classList.add('active');
+
+            // Section-specific loads
+            if (section === 'inventory') loadInventory();
+            if (section === 'khata') loadKhata();
+            if (section === 'sales') loadSalesHistory();
+        }
+
+        /* ═══ TOAST SYSTEM ═══════════════════════════════════════ */
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast-vs ${type}`;
+            const icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
+            toast.innerHTML = `<span style="font-size:16px">${icon}</span> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = 'toast-in 0.3s ease reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        /* ═══ SPEECH RECOGNITION ════════════════════════════════ */
+        let currentDraftBill = null;
+        let isRecording = false;
+        let recognition = null;
+        let micAutoStopTimer = null;
+        let finalTranscript = '';
+        let selectedSpeechLang = localStorage.getItem('voice_lang') || 'hi-IN';
+        let _clarificationQueue = [];
+        let _accumulatedClarifiedItems = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            autoLoginOwner();
+            initSpeechRecognition();
+        });
+
+        function toggleSpeechLang() {
+            if (selectedSpeechLang === 'hi-IN') {
+                selectedSpeechLang = 'mr-IN';
+            } else if (selectedSpeechLang === 'mr-IN') {
+                selectedSpeechLang = 'en-IN';
+            } else {
+                selectedSpeechLang = 'hi-IN';
+            }
+            localStorage.setItem('voice_lang', selectedSpeechLang);
+            if (recognition) {
+                recognition.lang = selectedSpeechLang;
+            }
+            const langBtn = document.getElementById('voice-lang-toggle');
+            if (langBtn) {
+                if (selectedSpeechLang === 'hi-IN') langBtn.innerText = '🌐 HI (Hindi)';
+                else if (selectedSpeechLang === 'mr-IN') langBtn.innerText = '🌐 MR (Marathi)';
+                else langBtn.innerText = '🌐 EN (Hinglish/English)';
+            }
+            const langLabels = { 'hi-IN': 'Hindi (hi-IN)', 'mr-IN': 'Marathi (mr-IN)', 'en-IN': 'English/Hinglish (en-IN)' };
+            showToast(`Voice recognition language set to ${langLabels[selectedSpeechLang]}`, 'info');
+        }
+
+        function initSpeechRecognition() {
+            const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRec) {
+                console.warn('Web Speech API not supported in this browser.');
+                return;
+            }
+
+            recognition = new SpeechRec();
+            recognition.continuous = true;        // ← KEEP LISTENING (don't stop after 1 sec pause)
+            recognition.interimResults = true;    // ← Show live transcript as user speaks
+            recognition.lang = selectedSpeechLang; // Default: hi-IN, mr-IN, or en-IN
+            recognition.maxAlternatives = 1;
+
+            recognition.onstart = () => {
+                isRecording = true;
+                finalTranscript = '';
+                document.getElementById('mic-btn').classList.add('listening');
+                document.getElementById('mic-icon').className = 'fa-solid fa-microphone-lines';
+                setMicStatus(
+                    '<i class="fa-solid fa-circle" style="color:var(--red);animation:mic-blink 1s infinite"></i> ' +
+                    '<strong>Listening... Speak your order</strong>',
+                    'Tap mic again to stop and process'
+                );
+                // Show the DONE button while recording
+                const doneBtn = document.getElementById('mic-done-btn');
+                if (doneBtn) doneBtn.classList.remove('d-none');
+
+                // Auto-stop after 30 seconds max
+                micAutoStopTimer = setTimeout(() => {
+                    if (isRecording) stopAndProcessVoice();
+                }, 30000);
+            };
+
+            recognition.onresult = (event) => {
+                let interim = '';
+                finalTranscript = '';
+                for (let i = 0; i < event.results.length; i++) {
+                    if (event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript + ' ';
+                    } else {
+                        interim += event.results[i][0].transcript;
+                    }
+                }
+                // Show live transcript in the input box
+                const inputBox = document.getElementById('voice-input-text');
+                inputBox.value = (finalTranscript + interim).trim();
+                // Update status with interim text
+                if (interim) {
+                    setMicStatus(
+                        '<i class="fa-solid fa-circle" style="color:var(--red)"></i> ' +
+                        '<em style="color:var(--text-secondary)">' + interim + '</em>',
+                        'Keep speaking...'
+                    );
+                }
+            };
+
+            recognition.onend = () => {
+                isRecording = false;
+                clearTimeout(micAutoStopTimer);
+                document.getElementById('mic-btn').classList.remove('listening');
+                document.getElementById('mic-icon').className = 'fa-solid fa-microphone';
+                const doneBtn = document.getElementById('mic-done-btn');
+                if (doneBtn) doneBtn.classList.add('d-none');
+                setMicStatus('Tap mic to start speaking', '');
+
+                // If we have a transcript, auto-process it
+                const inputVal = document.getElementById('voice-input-text').value.trim();
+                if (inputVal) {
+                    processVoiceInputText();
+                }
+            };
+
+            recognition.onerror = (e) => {
+                clearTimeout(micAutoStopTimer);
+                isRecording = false;
+                document.getElementById('mic-btn').classList.remove('listening');
+                document.getElementById('mic-icon').className = 'fa-solid fa-microphone';
+                const doneBtn = document.getElementById('mic-done-btn');
+                if (doneBtn) doneBtn.classList.add('d-none');
+                setMicStatus('Tap mic to start speaking', '');
+
+                const errorMessages = {
+                    'no-speech':        'No speech detected. Please tap and speak clearly.',
+                    'audio-capture':    'Microphone not found. Please check your mic connection.',
+                    'not-allowed':      'Microphone permission denied. Please allow mic access in browser settings.',
+                    'network':          'Network error. Voice recognition needs internet connection.',
+                    'aborted':          '',   // silent — user manually stopped
+                    'service-not-allowed': 'Speech service not allowed on this browser.',
+                };
+                const msg = errorMessages[e.error];
+                if (msg) showToast(msg, 'error');
+                console.warn('Speech recognition error:', e.error);
+            };
+        }
+
+        function setMicStatus(html, subText) {
+            const el = document.getElementById('recording-status');
+            if (el) el.innerHTML = html + (subText ? `<br><small style="color:var(--text-muted)">${subText}</small>` : '');
+        }
+
+        function toggleVoiceRecording() {
+            if (!recognition) {
+                showToast("Voice recognition is not supported in this browser. Please use Chrome or Edge and try the text input below.", 'error');
+                return;
+            }
+            if (isRecording) {
+                stopAndProcessVoice();
+            } else {
+                showSection('billing');
+                finalTranscript = '';
+                document.getElementById('voice-input-text').value = '';
+                try {
+                    recognition.start();
+                } catch(e) {
+                    console.warn('Recognition already started:', e);
+                }
+            }
+        }
+
+        function stopAndProcessVoice() {
+            if (recognition && isRecording) {
+                recognition.stop();
+            }
+        }
+
+        function setQuickVoice(text) {
+            document.getElementById('voice-input-text').value = text;
+            processVoiceInputText();
+        }
+
+        /* ═══ AUTH & DATA LOADING ═══════════════════════════════ */
+        async function autoLoginOwner() {
+            try {
+                let res = await fetch('/api/v1/auth/login', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ phone: "9876543210", password: "password123" })
+                });
+
+                if (!res.ok) {
+                    await fetch('/api/v1/auth/register_owner', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            store_name: "Karvenagar Kirana",
+                            name: "Ramesh Owner",
+                            phone: "9876543210",
+                            password: "password123"
+                        })
+                    });
+                }
+                refreshAllData();
+            } catch (e) {
+                console.error("Auto login error:", e);
+                refreshAllData();
+            }
+        }
+
+        async function refreshAllData() {
+            loadStats();
+            loadInventory();
+            loadKhata();
+        }
+
+        async function loadStats() {
+            try {
+                const res = await fetch('/api/v1/sales/summary');
+                if (res.ok) {
+                    const data = await res.json();
+                    document.getElementById('stat-revenue').innerText = `₹${data.total_revenue.toFixed(0)}`;
+                    document.getElementById('stat-txns').innerText = data.txn_count;
+                    document.getElementById('stat-udhaar').innerText = `₹${data.outstanding_udhaar_total.toFixed(0)}`;
+                }
+                const resAlerts = await fetch('/api/v1/alerts');
+                if (resAlerts.ok) {
+                    const alerts = await resAlerts.json();
+                    document.getElementById('stat-alerts').innerText = alerts.total_alerts;
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        /* ═══ INVENTORY ══════════════════════════════════════════ */
+        async function loadInventory() {
+            try {
+                let queryParams = "";
+                const searchTerm = document.getElementById('inventory-search-input').value.trim();
+                if (searchTerm) queryParams = `?q=${encodeURIComponent(searchTerm)}`;
+
+                const res = await fetch(`/api/v1/products/search${queryParams}`);
+                if (!res.ok) return;
+                const data = await res.json();
+                const tbody = document.getElementById('inventory-table-body');
+                tbody.innerHTML = '';
+
+                let inStock = 0, lowStock = 0, outOfStock = 0;
+                data.forEach(p => {
+                    if (p.stock_status === 'out_of_stock') outOfStock++;
+                    else if (p.stock_status === 'low_stock') lowStock++;
+                    else inStock++;
+                });
+                document.getElementById('inv-total-count').innerText = data.length;
+                document.getElementById('inv-low-count').innerText = lowStock;
+                document.getElementById('inv-out-count').innerText = outOfStock;
+
+                if (data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">
+                        <div class="empty-icon">📦</div>
+                        <h4>No products found</h4>
+                        <p>Add your first product to start billing faster</p>
+                        <button class="btn-vs-primary" onclick="showAddProductModal()"><i class="fa-solid fa-plus me-1"></i>Add Product</button>
+                    </div></td></tr>`;
+                    return;
+                }
+
+                data.forEach(p => {
+                    _productDataStore[p.product_id] = p;
+
+                    let badge = '';
+                    if (p.stock_status === 'out_of_stock') {
+                        badge = '<span class="badge-vs badge-vs-red">Out of Stock</span>';
+                    } else if (p.stock_status === 'low_stock') {
+                        badge = '<span class="badge-vs badge-vs-amber">Low Stock</span>';
+                    } else {
+                        badge = '<span class="badge-vs badge-vs-green">In Stock</span>';
+                    }
+
+                    const isLow = p.stock_status === 'out_of_stock' || p.stock_status === 'low_stock';
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>
+                                <div class="product-name">${p.name}</div>
+                                <div class="product-brand">${p.brand ? p.brand : ''}${p.category ? (p.brand ? ' · ' : '') + p.category : ''}</div>
+                            </td>
+                            <td>
+                                <span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:15px">₹${p.price ? p.price.toFixed(0) : '-'}</span>
+                                <div style="font-size:11px;color:var(--text-muted)">per ${p.unit}</div>
+                            </td>
+                            <td>
+                                <span style="font-weight:${isLow ? '700' : '500'};color:${isLow ? 'var(--red)' : 'var(--text)'}">
+                                    ${p.quantity_on_hand} ${p.unit}
+                                </span>
+                                ${p.low_stock_threshold > 0 ? `<div style="font-size:11px;color:var(--text-muted)">Min: ${p.low_stock_threshold}</div>` : ''}
+                            </td>
+                            <td>${badge}</td>
+                            <td>
+                                <div style="display:flex;gap:6px">
+                                    <button class="btn-icon" onclick="quickAddStock(${p.product_id})" title="Add Stock"><i class="fa-solid fa-plus"></i></button>
+                                    <button class="btn-icon" onclick="openEditProductModal(${p.product_id})" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                                    <button class="btn-icon danger" onclick="deleteProduct(${p.product_id})" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        /* ═══ KHATA / CUSTOMERS ══════════════════════════════════ */
+        async function loadKhata() {
+            try {
+                const res = await fetch('/api/v1/customers');
+                if (!res.ok) return;
+                const data = await res.json();
+                const custSelect = document.getElementById('bill-customer-select');
+                custSelect.innerHTML = '<option value="">— Cash / Walk-in Sale —</option>';
+
+                const listEl = document.getElementById('khata-customers-list');
+                const tableEl = document.getElementById('khata-table-body');
+
+                if (data.length === 0) {
+                    listEl.innerHTML = `<div class="empty-state">
+                        <div class="empty-icon">👤</div>
+                        <h4>No customers yet</h4>
+                        <p>Add customers to start managing Khata and track udhaar</p>
+                        <button class="btn-vs-primary" onclick="showAddCustomerModal()"><i class="fa-solid fa-user-plus me-1"></i>Add Customer</button>
+                    </div>`;
+                    listEl.classList.remove('d-none');
+                    tableEl.classList.add('d-none');
+                    document.getElementById('khata-total-outstanding').innerText = '₹0';
+                    return;
+                }
+
+                let totalOutstanding = 0;
+                listEl.innerHTML = '';
+                tableEl.innerHTML = '';
+
+                data.forEach(c => {
+                    totalOutstanding += c.balance;
+                    custSelect.innerHTML += `<option value="${c.customer_id}">${c.name} (${c.phone || 'No phone'}) — ₹${c.balance.toFixed(0)}</option>`;
+
+                    const initials = c.name.split(' ').map(w => w[0]).join('').toUpperCase().substring(0, 2);
+                    const isPaid = c.balance <= 0;
+
+                    listEl.innerHTML += `
+                        <div class="customer-card">
+                            <div class="customer-avatar">${initials}</div>
+                            <div class="customer-info">
+                                <div class="customer-name">${escapeHtml(c.name)}</div>
+                                <div class="customer-phone">${escapeHtml(c.phone || 'No phone')}</div>
+                                ${!isPaid ? `<span class="badge-vs badge-vs-amber" style="margin-top:4px">Pending Udhaar</span>` : `<span class="badge-vs badge-vs-green" style="margin-top:4px">Cleared</span>`}
+                            </div>
+                            <div style="text-align:right">
+                                <div class="customer-balance ${isPaid ? 'paid' : ''}">₹${c.balance.toFixed(0)}</div>
+                                ${!isPaid ? `<button class="btn-vs-primary" style="margin-top:8px;font-size:12px;height:34px;padding:0 12px" onclick="openPaymentModal(${c.customer_id}, '${c.name.replace(/'/g, "\\'")}')"><i class="fa-solid fa-money-bill-wave me-1"></i>Pay</button>` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                document.getElementById('khata-total-outstanding').innerText = `₹${totalOutstanding.toFixed(0)}`;
+                listEl.classList.remove('d-none');
+                tableEl.classList.add('d-none');
+
+            } catch (e) { console.error(e); }
+        }
+
+        /* ═══ HELPERS ═══════════════════════════════════════════ */
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        /* ═══ SALES HISTORY ══════════════════════════════════════ */
+        async function loadSalesHistory() {
+            try {
+                const res = await fetch('/api/v1/sales/history');
+                if (!res.ok) return;
+                const data = await res.json();
+                const tbody = document.getElementById('sales-history-tbody');
+                if (!tbody) return;
+                tbody.innerHTML = '';
+
+                if (!data.sales || data.sales.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">
+                        <div class="empty-icon">🧾</div>
+                        <h4>No sales recorded yet</h4>
+                        <p>Bills created via voice or manual billing will appear here</p>
+                    </div></td></tr>`;
+                    return;
+                }
+
+                data.sales.forEach(s => {
+                    const statusBadge = s.payment_status === 'udhaar'
+                        ? '<span class="badge-vs badge-vs-amber">Udhaar</span>'
+                        : '<span class="badge-vs badge-vs-green">Paid</span>';
+                    const dt = new Date(s.created_at).toLocaleString();
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><strong>${escapeHtml(s.invoice_number)}</strong></td>
+                            <td style="font-size:13px;color:var(--text-secondary)">${dt}</td>
+                            <td>${escapeHtml(s.customer_name)}</td>
+                            <td>${s.items_count} item(s)</td>
+                            <td>${statusBadge}</td>
+                            <td><strong style="font-family:'Plus Jakarta Sans',sans-serif;color:var(--green)">₹${s.total.toFixed(2)}</strong></td>
+                            <td>
+                                <a class="btn-vs-ghost" href="/api/v1/receipts/${s.txn_id}/view" target="_blank" style="padding:4px 10px;font-size:12px">
+                                    <i class="fa-solid fa-eye me-1"></i>Receipt
+                                </a>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (e) {
+                console.error("Sales history error:", e);
+            }
+        }
+
+        /* ═══ SPEECH SYNTHESIS HELPER ══════════════════════════ */
+        function speakText(text, onEndCallback) {
+            if (!text) {
+                if (onEndCallback) onEndCallback();
+                return;
+            }
+            if (!('speechSynthesis' in window)) {
+                console.warn('SpeechSynthesis is not supported on this browser. Falling back to visual confirmation.');
+                if (onEndCallback) onEndCallback();
+                return;
+            }
+            try {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.95;
+
+                const voices = window.speechSynthesis.getVoices();
+                let targetLang = selectedSpeechLang || 'hi-IN';
+                let voice = voices.find(v => v.lang.startsWith(targetLang));
+                if (!voice && targetLang === 'mr-IN') {
+                    voice = voices.find(v => v.lang.startsWith('hi-IN'));
+                }
+                if (!voice) {
+                    voice = voices.find(v => v.lang.startsWith('en-IN') || v.lang.startsWith('en'));
+                }
+                if (voice) utterance.voice = voice;
+                utterance.lang = targetLang;
+
+                if (onEndCallback) {
+                    utterance.onend = () => onEndCallback();
+                    utterance.onerror = (e) => {
+                        console.warn('SpeechSynthesis error:', e);
+                        onEndCallback();
+                    };
+                }
+                window.speechSynthesis.speak(utterance);
+            } catch(e) {
+                console.warn('SpeechSynthesis exception:', e);
+                if (onEndCallback) onEndCallback();
+            }
+        }
+
+        /* ═══ VOICE BILLING & CHECKPOINTS ═════════════════════════ */
+        let currentClarificationState = null;
+        let isReadbackConfirmed = false;
+        let confirmedDraftSignature = null;
+        let pendingCheckoutPaymentStatus = 'paid';
+
+        async function processVoiceInputText() {
+            const input = document.getElementById('voice-input-text');
+            const transcript = input.value.trim();
+            if (!transcript) return;
+
+            const statusEl = document.getElementById('recording-status');
+            const originalStatus = statusEl.innerHTML;
+            statusEl.innerHTML = '<span style="color:var(--primary);font-weight:600"><i class="fa-solid fa-spinner fa-spin me-1"></i>Processing...</span>';
+
+            try {
+                const bodyPayload = { transcript };
+                if (currentDraftBill) {
+                    bodyPayload.draft_bill_id = currentDraftBill.draft_bill_id;
+                }
+
+                const res = await fetch('/api/v1/voice/process_bill', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(bodyPayload)
+                });
+
+                if (res.status === 401 || res.redirected) {
+                    statusEl.innerHTML = originalStatus;
+                    showToast('Session expired. Re-logging in...', 'info');
+                    await autoLoginOwner();
+                    const res2 = await fetch('/api/v1/voice/process_bill', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(bodyPayload)
+                    });
+                    if (!res2.ok) {
+                        showToast('Authentication failed. Please refresh the page.', 'error');
+                        return;
+                    }
+                    const data2 = await res2.json();
+                    handleVoiceResponse(data2);
+                    input.value = '';
+                    return;
+                }
+
+                const data = await res.json();
+                handleVoiceResponse(data);
+                if (data.status === 'draft_created' || data.status === 'needs_clarification') {
+                    input.value = '';
+                }
+            } catch (e) {
+                console.error(e);
+                showToast("Failed to process voice command. Please try again.", 'error');
+            } finally {
+                statusEl.innerHTML = originalStatus;
+            }
+        }
+
+        function handleVoiceResponse(data) {
+            // Check for STT Offline / Service Unavailable
+            if (data.error && data.error.code === 'STT_UNAVAILABLE') {
+                const msg = "🎤 Speech recognition offline — please type below";
+                showToast(msg, 'warning');
+                setMicStatus('<span style="color:var(--red);font-weight:600">⚠️ ' + escapeHtml(msg) + '</span>', 'Please type your bill items below');
+                const input = document.getElementById('voice-input-text');
+                if (input) input.focus();
+                speakText(msg);
+                return;
+            }
+
+            // CHECKPOINT 1: STT Failure or Low Confidence
+            if (data.status === 'stt_failed' || (data.error && data.error.code && data.error.code.includes('LOW_CONFIDENCE'))) {
+                const msg = data.message || (data.error ? data.error.message : "I couldn't understand that. Please say the name again");
+                showToast(msg, 'error');
+                setMicStatus('<span style="color:var(--red);font-weight:600">⚠️ ' + escapeHtml(msg) + '</span>', 'Please try speaking again');
+                speakText(msg, () => {
+                    try {
+                        if (recognition && !isRecording) {
+                            finalTranscript = '';
+                            document.getElementById('voice-input-text').value = '';
+                            recognition.start();
+                        }
+                    } catch(err) {
+                        console.warn('Auto-mic restart error:', err);
+                    }
+                });
+                return;
+            }
+
+            // CHECKPOINT 2: Ambiguous Product Match / Clarification Queue
+            if (data.status === 'needs_clarification') {
+                _clarificationQueue = data.clarifications || [];
+                _accumulatedClarifiedItems = data.partial_matched_items || [];
+                processNextClarification();
+                showSection('billing');
+            } else if (data.status === 'draft_created') {
+                hideClarification();
+                if (data.readback_text) {
+                    data.draft_bill.readback_text = data.readback_text;
+                }
+                renderDraftBill(data.draft_bill, data.payment_status);
+                showSection('billing');
+            } else if (data.status === 'query') {
+                showToast(data.message, 'info');
+                showSection('assistant');
+                askAI(document.getElementById('voice-input-text').value);
+            } else if (data.error) {
+                showToast(data.error.message, 'error');
+            }
+        }
+
+        function processNextClarification() {
+            if (!_clarificationQueue || _clarificationQueue.length === 0) {
+                hideClarification();
+                if (_accumulatedClarifiedItems && _accumulatedClarifiedItems.length > 0) {
+                    submitClarifiedVoiceItems(_accumulatedClarifiedItems);
+                    _accumulatedClarifiedItems = [];
+                }
+                return;
+            }
+            const item = _clarificationQueue[0];
+            showClarificationItem(item);
+        }
+
+        function showClarificationItem(item) {
+            const box = document.getElementById('clarification-box');
+            const qText = document.getElementById('clarification-question');
+            const candidatesDiv = document.getElementById('clarification-candidates');
+
+            box.classList.remove('d-none');
+
+            if (!item || !item.candidates || item.candidates.length === 0) {
+                // No candidates — skip this item and advance the queue
+                _clarificationQueue.shift();
+                showToast((item && item.question) ? item.question : "Product not found. Skipping.", 'info');
+                speakText((item && item.question) ? item.question : "Product not found. Skipping.");
+                // Short delay so the toast/speech is readable before next item
+                setTimeout(() => processNextClarification(), 1200);
+                return;
+            }
+
+            currentClarificationState = { item };
+
+            qText.innerText = item.question;
+            candidatesDiv.innerHTML = '';
+
+            let spokenParts = [item.question || "Which product did you mean?"];
+
+            item.candidates.forEach((c, idx) => {
+                const optNum = idx + 1;
+                candidatesDiv.innerHTML += `
+                    <button class="clarify-btn" onclick="selectClarifiedProduct(${c.product_id})">
+                        Option ${optNum}: ${escapeHtml(c.name)} — ₹${c.price}
+                    </button>
+                `;
+                spokenParts.push(`Option ${optNum}: ${c.name}.`);
+            });
+
+            const speechText = item.speech_text || spokenParts.join(' ');
+            speakText(speechText);
+        }
+
+        function hideClarification() {
+            document.getElementById('clarification-box').classList.add('d-none');
+            currentClarificationState = null;
+        }
+
+        function selectClarifiedProduct(productId) {
+            if (!_clarificationQueue || _clarificationQueue.length === 0) return;
+            const currentItem = _clarificationQueue.shift();
+            const qty = currentItem.quantity || 1.0;
+
+            // Learn merchant synonym preference via feedback endpoint
+            if (currentItem.raw_text) {
+                fetch('/api/v1/voice/feedback', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ spoken_text: currentItem.raw_text, chosen_product_id: productId })
+                }).catch(e => console.warn('Synonym feedback notice:', e));
+            }
+
+            _accumulatedClarifiedItems.push({ product_id: productId, quantity: qty });
+            processNextClarification();
+        }
+
+        async function submitClarifiedVoiceItems(items) {
+            const statusEl = document.getElementById('recording-status');
+            const originalStatus = statusEl.innerHTML;
+            statusEl.innerHTML = '<span style="color:var(--primary);font-weight:600"><i class="fa-solid fa-spinner fa-spin me-1"></i>Adding items to bill...</span>';
+
+            const bodyPayload = { items };
+            if (currentDraftBill) {
+                bodyPayload.draft_bill_id = currentDraftBill.draft_bill_id;
+            }
+
+            try {
+                const res = await fetch('/api/v1/billing/create', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(bodyPayload)
+                });
+                const data = await res.json();
+                if (data.draft_bill_id) {
+                    hideClarification();
+                    renderDraftBill(data, 'paid');
+                    showSection('billing');
+                    // Speak readback text if available
+                    const readback = data.readback_text || `Bill updated. Total is ₹${data.total ? data.total.toFixed(2) : '0'}.`;
+                    showToast('Items added to bill ✓', 'success');
+                    speakText(readback);
+                    statusEl.innerHTML = originalStatus;
+                } else if (data.error) {
+                    showToast(data.error.message || 'Failed to create bill.', 'error');
+                    statusEl.innerHTML = originalStatus;
+                } else {
+                    showToast('Unexpected error creating bill.', 'error');
+                    statusEl.innerHTML = originalStatus;
+                }
+            } catch (e) {
+                console.error("Error submitting clarified items:", e);
+                showToast('Network error. Please try again.', 'error');
+                statusEl.innerHTML = originalStatus;
+            }
+        }
+
+        function renderDraftBill(draft, paymentStatus) {
+            currentDraftBill = draft;
+
+            // CHECKPOINT 3 RE-CONFIRMATION CHECK: Reset isReadbackConfirmed if draft items change
+            const itemsSig = draft.draft_bill_id + '_' + JSON.stringify(draft.line_items.map(i => ({ id: i.product_id, qty: i.quantity, total: i.line_total })));
+            if (confirmedDraftSignature !== itemsSig) {
+                isReadbackConfirmed = false;
+                confirmedDraftSignature = itemsSig;
+            }
+
+            document.getElementById('draft-id-badge').innerText = `ID: ${draft.draft_bill_id.substring(0, 8)}...`;
+            document.getElementById('cart-total-display').innerText = `₹${draft.total.toFixed(2)}`;
+
+            document.getElementById('bill-empty-state').classList.add('d-none');
+            document.getElementById('bill-items-list').classList.remove('d-none');
+
+            // Render warning banner if stock is insufficient
+            let warningBanner = document.getElementById('draft-warnings-banner');
+            if (!warningBanner) {
+                warningBanner = document.createElement('div');
+                warningBanner.id = 'draft-warnings-banner';
+                const parent = document.getElementById('bill-items-list');
+                parent.insertBefore(warningBanner, parent.firstChild);
+            }
+
+            if (draft.warnings && draft.warnings.length > 0) {
+                let html = '<div style="background:var(--amber-light);border:1px solid var(--amber);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px">';
+                draft.warnings.forEach(w => {
+                    html += `<div style="color:#92400E;font-size:12px;font-weight:600">⚠️ Stock Warning: ${escapeHtml(w.product_name)} (Req: ${w.requested}, Available: ${w.available})</div>`;
+                });
+                html += '</div>';
+                warningBanner.innerHTML = html;
+            } else {
+                warningBanner.innerHTML = '';
+            }
+
+            const tbody = document.getElementById('cart-items-body');
+            tbody.innerHTML = '';
+
+            draft.line_items.forEach(item => {
+                tbody.innerHTML += `
+                    <div class="bill-item-row">
+                        <div class="bill-item-name">${escapeHtml(item.name)}</div>
+                        <div style="color:var(--text-secondary);font-size:13px">${item.quantity} ${escapeHtml(item.unit)}</div>
+                        <div style="font-size:13px">₹${item.unit_price.toFixed(2)}</div>
+                        <div style="text-align:right;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;color:var(--green)">₹${item.line_total.toFixed(2)}</div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('btn-confirm-paid').disabled = false;
+            document.getElementById('btn-confirm-udhaar').disabled = false;
+        }
+
+        /* CHECKPOINT 3: Pre-Checkout Read-Back & Confirmation */
+        function showReadbackConfirmationModal(paymentStatus) {
+            if (!currentDraftBill) return;
+
+            let readbackText = currentDraftBill.readback_text;
+            if (!readbackText) {
+                const itemParts = currentDraftBill.line_items.map(i => `${i.quantity} ${i.unit} of ${i.name} for ${i.line_total.toFixed(2)} rupees`);
+                readbackText = `Bill read-back: ${itemParts.join(', ')}. Total amount is ${currentDraftBill.total.toFixed(2)} rupees. Please confirm to complete sale.`;
+            }
+
+            document.getElementById('readback-speech-text-box').innerText = readbackText;
+            document.getElementById('readback-total-display').innerText = `₹${currentDraftBill.total.toFixed(2)}`;
+
+            let breakdownHtml = '';
+            currentDraftBill.line_items.forEach(i => {
+                breakdownHtml += `
+                    <div class="d-flex justify-content-between align-items-center py-2 style="border-bottom:1px solid var(--border-color)">
+                        <div><strong>${escapeHtml(i.name)}</strong> (${i.quantity} ${escapeHtml(i.unit)})</div>
+                        <div style="font-weight:700;color:var(--green)">₹${i.line_total.toFixed(2)}</div>
+                    </div>
+                `;
+            });
+            document.getElementById('readback-items-breakdown').innerHTML = breakdownHtml;
+
+            // Speak read-back out loud
+            speakText(readbackText);
+
+            // Open Bootstrap Modal
+            const modalEl = document.getElementById('modalReadbackConfirm');
+            const modal = new bootstrap.Modal(modalEl);
+            modal.show();
+        }
+
+        function proceedWithConfirmedCheckout() {
+            isReadbackConfirmed = true;
+            const modalEl = document.getElementById('modalReadbackConfirm');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            if (modal) modal.hide();
+
+            executeBillCheckout(pendingCheckoutPaymentStatus);
+        }
+
+        async function confirmCurrentBill(paymentStatus) {
+            if (!currentDraftBill) return;
+
+            if (currentDraftBill.warnings && currentDraftBill.warnings.length > 0) {
+                if (!confirm("Warning: Some items in this bill have insufficient stock. Do you still want to confirm this bill?")) {
+                    return;
+                }
+            }
+
+            const custId = document.getElementById('bill-customer-select').value;
+            if (paymentStatus === 'udhaar' && !custId) {
+                showToast("Please select a customer to record Udhaar!", 'error');
+                return;
+            }
+
+            pendingCheckoutPaymentStatus = paymentStatus;
+
+            // CHECKPOINT 3 GATE: Require Read-Back & Confirmation if not yet confirmed
+            if (!isReadbackConfirmed) {
+                showReadbackConfirmationModal(paymentStatus);
+                return;
+            }
+
+            executeBillCheckout(paymentStatus);
+        }
+
+        async function executeBillCheckout(paymentStatus) {
+            if (!currentDraftBill) return;
+            const custId = document.getElementById('bill-customer-select').value;
+
+            try {
+                const res = await fetch('/api/v1/billing/confirm', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        draft_bill_id: currentDraftBill.draft_bill_id,
+                        payment_status: paymentStatus,
+                        customer_id: custId ? parseInt(custId) : null,
+                        idempotency_key: crypto.randomUUID()
+                    })
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    showToast(`✓ Invoice ${data.invoice_number} confirmed successfully!`, 'success');
+
+                    // Open digital receipt in new tab
+                    const receiptUrl = `/api/v1/receipts/${data.txn_id}/view`;
+                    window.open(receiptUrl, '_blank');
+
+                    currentDraftBill = null;
+                    isReadbackConfirmed = false;
+                    confirmedDraftSignature = null;
+
+                    // Reset bill UI
+                    document.getElementById('bill-empty-state').classList.remove('d-none');
+                    document.getElementById('bill-items-list').classList.add('d-none');
+                    document.getElementById('cart-total-display').innerText = '₹0.00';
+                    document.getElementById('draft-id-badge').innerText = 'No Draft';
+                    document.getElementById('btn-confirm-paid').disabled = true;
+                    document.getElementById('btn-confirm-udhaar').disabled = true;
+                    document.getElementById('voice-input-text').value = '';
+                    refreshAllData();
+                } else {
+                    showToast(data.error ? data.error.message : "Confirmation failed", 'error');
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        /* ═══ PRODUCT MODALS ═════════════════════════════════════ */
+        function showAddProductModal() {
+            new bootstrap.Modal(document.getElementById('modalAddProduct')).show();
+        }
+
+        async function submitAddProduct() {
+            const name = document.getElementById('new-prod-name').value.trim();
+            const unit = document.getElementById('new-prod-unit').value || 'packet';
+            const price = parseFloat(document.getElementById('new-prod-price').value);
+            const costStr = document.getElementById('new-prod-cost').value;
+            const cost_price = costStr ? parseFloat(costStr) : null;
+            const stock = parseFloat(document.getElementById('new-prod-stock').value) || 0;
+            const thresholdStr = document.getElementById('new-prod-threshold').value;
+            const threshold = thresholdStr ? parseFloat(thresholdStr) : 2;
+            const brand = document.getElementById('new-prod-brand').value.trim();
+            const category = document.getElementById('new-prod-category').value.trim();
+            const sku = document.getElementById('new-prod-sku').value.trim();
+            const barcode = document.getElementById('new-prod-barcode').value.trim();
+            const imageUrl = document.getElementById('new-prod-image').value.trim();
+
+            if (!name) { showToast('Product name is required.', 'error'); return; }
+            if (isNaN(price) || price < 0) { showToast('Please provide a valid selling price.', 'error'); return; }
+
+            try {
+                const res = await fetch('/api/v1/products', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        name, unit, price, cost_price,
+                        brand: brand || null, category: category || null,
+                        quantity_on_hand: stock, low_stock_threshold: threshold,
+                        sku: sku || null, barcode: barcode || null, image_url: imageUrl || null
+                    })
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('modalAddProduct')).hide();
+                    ['new-prod-name','new-prod-price','new-prod-cost','new-prod-brand','new-prod-category',
+                     'new-prod-sku','new-prod-barcode','new-prod-image'].forEach(id => document.getElementById(id).value = '');
+                    document.getElementById('new-prod-stock').value = '10';
+                    document.getElementById('new-prod-threshold').value = '2';
+                    loadInventory();
+                    loadStats();
+                    showToast('✓ Product added successfully!', 'success');
+                } else {
+                    showToast('Error: ' + (data.error ? data.error.message : 'Failed to create product'), 'error');
+                }
+            } catch (e) {
+                console.error(e);
+                showToast('Failed to create product due to network error.', 'error');
+            }
+        }
+
+        const _productDataStore = {};
+
+        function openEditProductModal(productId) {
+            const prod = _productDataStore[productId];
+            if (!prod) return;
+            document.getElementById('edit-prod-id').value = prod.product_id;
+            document.getElementById('edit-prod-name').value = prod.name || '';
+            const unitSel = document.getElementById('edit-prod-unit');
+            unitSel.value = prod.unit || 'piece';
+            if (!unitSel.value) unitSel.value = 'piece';
+            document.getElementById('edit-prod-price').value = prod.price || '';
+            document.getElementById('edit-prod-cost').value = prod.cost_price || '';
+            document.getElementById('edit-prod-brand').value = prod.brand || '';
+            document.getElementById('edit-prod-category').value = prod.category || '';
+            document.getElementById('edit-prod-threshold').value = prod.low_stock_threshold || '';
+            document.getElementById('edit-prod-sku').value = prod.sku || '';
+            document.getElementById('edit-prod-barcode').value = prod.barcode || '';
+            document.getElementById('edit-prod-image').value = prod.image_url || '';
+            new bootstrap.Modal(document.getElementById('modalEditProduct')).show();
+        }
+
+        async function submitEditProduct() {
+            const id = document.getElementById('edit-prod-id').value;
+            const name = document.getElementById('edit-prod-name').value.trim();
+            const unit = document.getElementById('edit-prod-unit').value;
+            const priceStr = document.getElementById('edit-prod-price').value;
+            const costStr = document.getElementById('edit-prod-cost').value;
+            const brand = document.getElementById('edit-prod-brand').value.trim();
+            const category = document.getElementById('edit-prod-category').value.trim();
+            const thresholdStr = document.getElementById('edit-prod-threshold').value;
+            const sku = document.getElementById('edit-prod-sku').value.trim();
+            const barcode = document.getElementById('edit-prod-barcode').value.trim();
+            const imageUrl = document.getElementById('edit-prod-image').value.trim();
+
+            const body = {};
+            if (name) body.name = name;
+            if (unit) body.unit = unit;
+            if (priceStr) body.price = parseFloat(priceStr);
+            if (costStr) body.cost_price = parseFloat(costStr);
+            body.brand = brand || null;
+            body.category = category || null;
+            if (thresholdStr) body.low_stock_threshold = parseFloat(thresholdStr);
+            body.sku = sku || null;
+            body.barcode = barcode || null;
+            body.image_url = imageUrl || null;
+
+            try {
+                const res = await fetch(`/api/v1/products/${id}`, {
+                    method: 'PATCH',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(body)
+                });
+
+                if (res.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('modalEditProduct')).hide();
+                    loadInventory();
+                    showToast('✓ Product updated successfully!', 'success');
+                } else {
+                    const data = await res.json();
+                    showToast('Error: ' + (data.error ? data.error.message : 'Failed to update'), 'error');
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function deleteProduct(id) {
+            if (!confirm("Are you sure you want to delete this product?")) return;
+            try {
+                const res = await fetch(`/api/v1/products/${id}`, { method: 'DELETE' });
+                if (res.ok) {
+                    loadInventory();
+                    showToast('Product deleted.', 'info');
+                } else {
+                    showToast("Failed to delete product.", 'error');
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        /* ═══ CSV IMPORT ═════════════════════════════════════════ */
+        let currentValidatedCsvRows = null;
+
+        function showCsvImportModal() {
+            document.getElementById('csvFileInput').value = '';
+            document.getElementById('csvPreviewArea').classList.add('d-none');
+            document.getElementById('btnConfirmImport').disabled = true;
+            currentValidatedCsvRows = null;
+            new bootstrap.Modal(document.getElementById('modalCsvImport')).show();
+        }
+
+        async function previewCsv() {
+            const fileInput = document.getElementById('csvFileInput');
+            if (!fileInput.files.length) { showToast("Please select a CSV file first.", 'info'); return; }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const res = await fetch('/api/v1/products/import/preview', { method: 'POST', body: formData });
+                const data = await res.json();
+
+                if (res.ok) {
+                    document.getElementById('csvPreviewArea').classList.remove('d-none');
+                    document.getElementById('csvValidCount').innerText = data.valid_count;
+                    document.getElementById('csvInvalidCount').innerText = data.invalid_count;
+
+                    const errorsArea = document.getElementById('csvErrorsArea');
+                    const errorList = document.getElementById('csvErrorList');
+                    errorList.innerHTML = '';
+
+                    if (data.invalid_count > 0) {
+                        errorsArea.classList.remove('d-none');
+                        data.invalid_rows.forEach(row => {
+                            errorList.innerHTML += `<li>Row ${row.row_index}: ${row.errors.join(', ')}</li>`;
+                        });
+                    } else {
+                        errorsArea.classList.add('d-none');
+                    }
+
+                    if (data.valid_count > 0) {
+                        currentValidatedCsvRows = data.valid_rows;
+                        document.getElementById('btnConfirmImport').disabled = false;
+                    }
+                } else {
+                    showToast(data.error ? data.error.message : "Failed to preview CSV", 'error');
+                }
+            } catch (e) {
+                showToast("Network error during CSV preview", 'error');
+            }
+        }
+
+        async function confirmImport() {
+            if (!currentValidatedCsvRows || currentValidatedCsvRows.length === 0) return;
+            document.getElementById('btnConfirmImport').disabled = true;
+            document.getElementById('btnConfirmImport').innerText = "Importing...";
+
+            try {
+                const res = await fetch('/api/v1/products/import/confirm', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ rows: currentValidatedCsvRows })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    showToast(data.message, 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('modalCsvImport')).hide();
+                    loadInventory();
+                } else {
+                    showToast(data.error ? data.error.message : "Import failed", 'error');
+                }
+            } catch (e) {
+                showToast("Network error during import", 'error');
+            } finally {
+                document.getElementById('btnConfirmImport').innerText = "Confirm Import";
+            }
+        }
+
+        /* ═══ CUSTOMERS ══════════════════════════════════════════ */
+        function showAddCustomerModal() {
+            new bootstrap.Modal(document.getElementById('modalAddCustomer')).show();
+        }
+
+        async function submitAddCustomer() {
+            const name = document.getElementById('new-cust-name').value;
+            const phone = document.getElementById('new-cust-phone').value;
+
+            if (!name) { showToast("Customer name is required.", 'error'); return; }
+
+            const res = await fetch('/api/v1/customers', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ name, phone })
+            });
+
+            if (res.ok) {
+                bootstrap.Modal.getInstance(document.getElementById('modalAddCustomer')).hide();
+                document.getElementById('new-cust-name').value = '';
+                document.getElementById('new-cust-phone').value = '';
+                loadKhata();
+                showToast('✓ Customer added successfully!', 'success');
+            } else {
+                showToast("Failed to create customer", 'error');
+            }
+        }
+
+        function openPaymentModal(custId, custName) {
+            document.getElementById('pay-cust-id').value = custId;
+            document.getElementById('pay-cust-name').innerText = custName;
+            new bootstrap.Modal(document.getElementById('modalPayment')).show();
+        }
+
+        async function submitRecordPayment() {
+            const custId = parseInt(document.getElementById('pay-cust-id').value);
+            const amount = parseFloat(document.getElementById('pay-amount').value);
+
+            if (isNaN(amount) || amount <= 0) { showToast("Enter a valid payment amount", 'error'); return; }
+
+            const res = await fetch('/api/v1/payments', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    customer_id: custId,
+                    amount: amount,
+                    idempotency_key: crypto.randomUUID()
+                })
+            });
+
+            if (res.ok) {
+                bootstrap.Modal.getInstance(document.getElementById('modalPayment')).hide();
+                document.getElementById('pay-amount').value = '';
+                refreshAllData();
+                showToast('✓ Payment recorded successfully!', 'success');
+            } else {
+                showToast("Failed to record payment", 'error');
+            }
+        }
+
+        /* ═══ STOCK UPDATE ═══════════════════════════════════════ */
+        async function quickAddStock(productId) {
+            const qty = prompt("Enter stock quantity to add:", "10");
+            if (!qty) return;
+            const delta = parseFloat(qty);
+            if (isNaN(delta)) return;
+
+            const res = await fetch(`/api/v1/inventory/${productId}`, {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ quantity_delta: delta, reason: "Manual stock addition from UI" })
+            });
+
+            if (res.ok) {
+                loadInventory();
+                showToast(`✓ Stock updated successfully!`, 'success');
+            }
+        }
+
+        /* ═══ AI ASSISTANT ═══════════════════════════════════════ */
+        function askAI(question) {
+            document.getElementById('assistant-input-text').value = question;
+            submitAssistantQuery();
+        }
+
+        async function submitAssistantQuery() {
+            const input = document.getElementById('assistant-input-text');
+            const q = input.value.trim();
+            if (!q) return;
+
+            const chat = document.getElementById('chat-window');
+            chat.innerHTML += `<div class="chat-bubble chat-bubble-user">${q}</div>`;
+            input.value = '';
+            chat.scrollTop = chat.scrollHeight;
+
+            // Loading indicator
+            const loadingId = 'ai-loading-' + Date.now();
+            chat.innerHTML += `<div class="chat-bubble chat-bubble-ai" id="${loadingId}" style="color:var(--text-muted)"><span class="loading-dots">Thinking</span></div>`;
+            chat.scrollTop = chat.scrollHeight;
+
+            try {
+                const res = await fetch('/api/v1/assistant/query', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ question: q })
+                });
+
+                const data = await res.json();
+                const loadingEl = document.getElementById(loadingId);
+                if (loadingEl) loadingEl.remove();
+
+                chat.innerHTML += `<div class="chat-bubble chat-bubble-ai">${data.answer_text}</div>`;
+                chat.scrollTop = chat.scrollHeight;
+            } catch (e) {
+                console.error(e);
+                const loadingEl = document.getElementById(loadingId);
+                if (loadingEl) loadingEl.textContent = "Something went wrong. Please try again.";
+            }
+        }
+
+        /* ═══ PWA SERVICE WORKER REGISTRATION ═══════════════════ */
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('✓ Vyapar Saarthi Service Worker Registered', reg))
+                    .catch(err => console.error('Service Worker registration failed:', err));
+            });
+        }
+    </script>
+</body>
+</html>

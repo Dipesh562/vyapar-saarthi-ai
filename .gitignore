@@ -1,0 +1,32 @@
+# Environment & secrets
+.env
+*.env
+!.env.example
+!.env.production.example
+
+# Python virtual environment
+venv/
+ENV/
+env/
+.venv/
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Database & instance state
+instance/
+*.db
+*.sqlite3
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs & temp files
+*.log
+tmp/
