@@ -78,7 +78,32 @@ def create_app(config_class=Config):
     # Automatically ensure DB tables & seed demo inventory on boot
     with app_obj.app_context():
         import app.models  # Ensure all SQLAlchemy models are registered
+        
+        def _sync_sqlite_schema():
+            try:
+                if 'sqlite' in str(db.engine.url):
+                    import sqlite3
+                    raw_uri = str(db.engine.url).replace('sqlite:///', '')
+                    db_path = raw_uri.replace('/', os.sep)
+                    if os.path.exists(db_path):
+                        conn = sqlite3.connect(db_path)
+                        cur = conn.cursor()
+                        cur.execute("PRAGMA table_info(stores);")
+                        existing_cols = [c[1] for c in cur.fetchall()]
+                        if existing_cols:
+                            if 'phone' not in existing_cols:
+                                cur.execute("ALTER TABLE stores ADD COLUMN phone VARCHAR(20);")
+                            if 'gstin' not in existing_cols:
+                                cur.execute("ALTER TABLE stores ADD COLUMN gstin VARCHAR(20);")
+                            if 'is_active' not in existing_cols:
+                                cur.execute("ALTER TABLE stores ADD COLUMN is_active BOOLEAN DEFAULT 1;")
+                            conn.commit()
+                        conn.close()
+            except Exception:
+                pass
+
         try:
+            _sync_sqlite_schema()
             db.create_all()
         except Exception as db_err:
             print(f"--> Database Connection Warning: {db_err}")
@@ -91,6 +116,7 @@ def create_app(config_class=Config):
             if 'sqlalchemy' in app_obj.extensions:
                 del app_obj.extensions['sqlalchemy']
             db.init_app(app_obj)
+            _sync_sqlite_schema()
             db.create_all()
 
         if not app_obj.config.get('TESTING') and app_obj.config.get('SEED_DEMO', True):
