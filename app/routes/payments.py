@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 from app.extensions import db
 from app.models import Customer
 from app.services.khata_engine import KhataEngine
-from app.utils.decorators import require_role
+from app.utils.decorators import require_role, get_active_store_id
 
 payments_bp = Blueprint('payments', __name__, url_prefix='/api/v1/payments')
 
@@ -32,12 +32,12 @@ def record_payment():
         }), 400
 
     # Idempotency check
-    cache_key = f"{current_user.store_id}:{idempotency_key}"
+    cache_key = f"{get_active_store_id()}:{idempotency_key}"
     if cache_key in IDEMPOTENCY_CACHE:
         cached_data, cached_code = IDEMPOTENCY_CACHE[cache_key]
         return jsonify(cached_data), cached_code
 
-    customer = Customer.query.filter_by(customer_id=customer_id, store_id=current_user.store_id).first()
+    customer = Customer.query.filter_by(customer_id=customer_id, store_id=get_active_store_id()).first()
     if not customer:
         return jsonify({
             "error": {
@@ -57,7 +57,7 @@ def record_payment():
 
     entry = KhataEngine.add_payment_entry(
         customer_id=customer_id,
-        store_id=current_user.store_id,
+        store_id=get_active_store_id(),
         user_id=current_user.user_id,
         amount=amt_dec
     )

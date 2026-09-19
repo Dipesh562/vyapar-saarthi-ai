@@ -5,7 +5,7 @@ from flask_login import current_user
 from sqlalchemy import func
 from app.extensions import db
 from app.models import Transaction, KhataEntry, Customer
-from app.utils.decorators import require_role
+from app.utils.decorators import require_role, get_active_store_id
 
 sales_bp = Blueprint('sales', __name__, url_prefix='/api/v1/sales')
 
@@ -39,7 +39,7 @@ def sales_summary():
         func.coalesce(func.sum(Transaction.total), 0),
         func.count(Transaction.txn_id)
     ).filter(
-        Transaction.store_id == current_user.store_id,
+        Transaction.store_id == get_active_store_id(),
         Transaction.voided_at.is_(None),
         Transaction.created_at >= start_date,
         Transaction.created_at <= end_date
@@ -54,7 +54,7 @@ def sales_summary():
     udhaar_query = db.session.query(
         func.coalesce(func.sum(case((KhataEntry.type == 'credit', KhataEntry.amount), else_=0)), 0) -
         func.coalesce(func.sum(case((KhataEntry.type == 'payment', KhataEntry.amount), else_=0)), 0)
-    ).filter(KhataEntry.store_id == current_user.store_id).scalar()
+    ).filter(KhataEntry.store_id == get_active_store_id()).scalar()
 
     outstanding_udhaar = Decimal(str(udhaar_query or 0))
 
@@ -77,7 +77,7 @@ def sales_history():
     from flask_login import login_required
     limit = int(request.args.get('limit', 50))
     txns = Transaction.query.filter_by(
-        store_id=current_user.store_id
+        store_id=get_active_store_id()
     ).filter(
         Transaction.voided_at.is_(None)
     ).order_by(

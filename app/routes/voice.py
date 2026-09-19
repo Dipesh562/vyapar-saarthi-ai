@@ -9,6 +9,7 @@ from app.services.product_matching import ProductMatchingEngine
 from app.services.billing_engine import BillingEngine
 from app.services.voice_feedback import VoiceFeedbackService
 from app.services.cart_session import MerchantCartSession
+from app.utils.decorators import get_active_store_id
 
 voice_bp = Blueprint('voice', __name__, url_prefix='/api/v1/voice')
 
@@ -50,7 +51,7 @@ def transcribe():
     # Save session
     session = VoiceSession(
         session_id=session_id,
-        store_id=current_user.store_id,
+        store_id=get_active_store_id(),
         user_id=current_user.user_id,
         transcript=transcript,
         confidence_score=confidence
@@ -88,7 +89,7 @@ def process_voice_bill():
         }), 400
 
     # Step 1: Fetch store cart session context & AI Intent/Entity Extraction
-    session_ctx = MerchantCartSession.get_context(current_user.store_id)
+    session_ctx = MerchantCartSession.get_context(get_active_store_id())
     ai_res = AIOrchestrationService.understand_transcript(transcript, context=session_ctx)
     intent = ai_res.get('intent', 'create_bill')
     confidence = ai_res.get('confidence', 1.0)
@@ -119,12 +120,12 @@ def process_voice_bill():
     resolved_customer_id = None
     if cust_name:
         cust = Customer.query.filter(
-            Customer.store_id == current_user.store_id,
+            Customer.store_id == get_active_store_id(),
             Customer.name.ilike(f"%{cust_name}%")
         ).first()
         if cust:
             resolved_customer_id = cust.customer_id
-            MerchantCartSession.set_last_customer(current_user.store_id, {"customer_id": cust.customer_id, "name": cust.name})
+            MerchantCartSession.set_last_customer(get_active_store_id(), {"customer_id": cust.customer_id, "name": cust.name})
 
     # Step 2: Product Matching Engine for each raw item entity
     matched_items = []
@@ -136,11 +137,11 @@ def process_voice_bill():
 
         # Handle referential items e.g., "add 2 more", "aur do kilo"
         if item.get('is_reference') or raw_text.lower().strip() in ['more', 'aur', 'add more', 'do more', '2 more', 'aur do']:
-            last_item_ref = MerchantCartSession.resolve_reference(current_user.store_id, "item")
+            last_item_ref = MerchantCartSession.resolve_reference(get_active_store_id(), "item")
             if last_item_ref:
                 raw_text = last_item_ref.get('raw_text') or last_item_ref.get('name') or raw_text
 
-        match_result = ProductMatchingEngine.match_product(current_user.store_id, raw_text)
+        match_result = ProductMatchingEngine.match_product(get_active_store_id(), raw_text)
 
         if match_result['matched'] and match_result['product']:
             product = match_result['product']
@@ -148,7 +149,7 @@ def process_voice_bill():
                 "product_id": product.product_id,
                 "quantity": quantity
             })
-            MerchantCartSession.set_last_item(current_user.store_id, {
+            MerchantCartSession.set_last_item(get_active_store_id(), {
                 "product_id": product.product_id,
                 "name": product.name,
                 "raw_text": raw_text,
@@ -197,7 +198,7 @@ def process_voice_bill():
     final_items = matched_items
     
     if draft_bill_id:
-        existing_draft = BillingEngine.get_draft_bill(draft_bill_id, current_user.store_id)
+        existing_draft = BillingEngine.get_draft_bill(draft_bill_id, get_active_store_id())
         if existing_draft:
             # Extract existing items
             existing_items_input = [{'product_id': item['product_id'], 'quantity': item['quantity']} for item in existing_draft.get('line_items', [])]
@@ -215,14 +216,14 @@ def process_voice_bill():
                 resolved_customer_id = existing_draft.get('customer_id')
                 
             # Void the old draft
-            BillingEngine.void_draft_bill(draft_bill_id, current_user.store_id)
+            BillingEngine.void_draft_bill(draft_bill_id, get_active_store_id())
 
     draft_bill = BillingEngine.create_draft_bill(
-        store_id=current_user.store_id,
+        store_id=get_active_store_id(),
         items=final_items,
         customer_id=resolved_customer_id
     )
-    MerchantCartSession.update_cart(current_user.store_id, final_items)
+    MerchantCartSession.update_cart(get_active_store_id(), final_items)
 
     readback_text = VoiceFeedbackService.build_readback_text(draft_bill)
 
@@ -249,7 +250,7 @@ def voice_feedback():
         return jsonify({"status": "error", "message": "spoken_text and chosen_product_id are required"}), 400
 
     synonym = ProductMatchingEngine.record_merchant_correction(
-        store_id=current_user.store_id,
+        store_id=get_active_store_id(),
         spoken_text=spoken_text,
         product_id=product_id
     )

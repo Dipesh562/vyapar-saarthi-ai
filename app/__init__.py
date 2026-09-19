@@ -46,6 +46,7 @@ def create_app(config_class=Config):
     from app.routes.assistant import assistant_bp
     from app.routes.alerts import alerts_bp
     from app.routes.inventory_csv import inventory_csv_bp
+    from app.routes.stores import stores_bp
 
     app_obj.register_blueprint(main_bp)
     app_obj.register_blueprint(health_bp)
@@ -62,6 +63,7 @@ def create_app(config_class=Config):
     app_obj.register_blueprint(assistant_bp)
     app_obj.register_blueprint(alerts_bp)
     app_obj.register_blueprint(inventory_csv_bp)
+    app_obj.register_blueprint(stores_bp)
 
     # Global 500 Error Handler (Sanitized output)
     @app_obj.errorhandler(500)

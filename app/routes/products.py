@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from app.extensions import db
 from app.models import Product, Inventory
-from app.utils.decorators import require_role
+from app.utils.decorators import require_role, get_active_store_id
 
 products_bp = Blueprint('products', __name__, url_prefix='/api/v1/products')
 
@@ -13,7 +13,7 @@ def list_products():
     GET /api/v1/products
     List all active products for the authenticated user's store.
     """
-    products = Product.query.filter_by(store_id=current_user.store_id, is_active=True).all()
+    products = Product.query.filter_by(store_id=get_active_store_id(), is_active=True).all()
     result = []
     for p in products:
         result.append({
@@ -61,7 +61,7 @@ def create_product():
 
     try:
         product = Product(
-            store_id=current_user.store_id,
+            store_id=get_active_store_id(),
             name=name,
             normalized_name=normalized_name,
             unit=unit,
@@ -119,7 +119,7 @@ def update_product(product_id):
     PATCH /api/v1/products/{id}
     Update product details (Owner only). Price edits are strictly owner-only.
     """
-    product = Product.query.filter_by(product_id=product_id, store_id=current_user.store_id, is_active=True).first()
+    product = Product.query.filter_by(product_id=product_id, store_id=get_active_store_id(), is_active=True).first()
     if not product:
         return jsonify({
             "error": {
@@ -177,7 +177,7 @@ def delete_product(product_id):
     DELETE /api/v1/products/{id}
     Soft delete a product (Owner only).
     """
-    product = Product.query.filter_by(product_id=product_id, store_id=current_user.store_id, is_active=True).first()
+    product = Product.query.filter_by(product_id=product_id, store_id=get_active_store_id(), is_active=True).first()
     if not product:
         return jsonify({
             "error": {
@@ -198,7 +198,7 @@ def get_inventory_stats():
     GET /api/v1/products/stats
     Returns inventory dashboard stats.
     """
-    products = Product.query.filter_by(store_id=current_user.store_id, is_active=True).all()
+    products = Product.query.filter_by(store_id=get_active_store_id(), is_active=True).all()
     
     total_products = len(products)
     in_stock = 0
@@ -235,7 +235,7 @@ def search_products():
     query_term = request.args.get('q', '').lower()
     filter_type = request.args.get('filter', 'all')
     
-    products_query = Product.query.filter_by(store_id=current_user.store_id, is_active=True)
+    products_query = Product.query.filter_by(store_id=get_active_store_id(), is_active=True)
     products = products_query.all()
     
     result = []

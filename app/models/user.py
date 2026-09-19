@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from app.extensions import db, login_manager
 
+
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
 
@@ -35,6 +36,21 @@ class User(UserMixin, db.Model):
     @property
     def is_helper(self):
         return self.role == 'helper'
+
+    @property
+    def accessible_store_ids(self):
+        """
+        Returns list of store_ids this user can access.
+        For owners: all stores in owner_stores junction table.
+        For helpers (future): only their assigned store.
+        """
+        if self.role != 'owner':
+            return [self.store_id]
+        # Import here to avoid circular import at module level
+        from app.models.owner_store import OwnerStore
+        links = OwnerStore.query.filter_by(owner_id=self.user_id).all()
+        return [link.store_id for link in links]
+
 
 @login_manager.user_loader
 def load_user(user_id):

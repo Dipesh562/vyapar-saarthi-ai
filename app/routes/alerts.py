@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify
 from flask_login import login_required, current_user
 from app.models import Product, Customer
 from app.services.khata_engine import KhataEngine
+from app.utils.decorators import get_active_store_id
 
 alerts_bp = Blueprint('alerts', __name__, url_prefix='/api/v1/alerts')
 
@@ -13,7 +14,7 @@ def get_dashboard_alerts():
     Surfaces low-stock items and aging Udhaar balances on the dashboard.
     """
     # 1. Low stock alerts
-    products = Product.query.filter_by(store_id=current_user.store_id, is_active=True).all()
+    products = Product.query.filter_by(store_id=get_active_store_id(), is_active=True).all()
     low_stock_alerts = []
     for p in products:
         if p.inventory and p.inventory.is_low_stock:
@@ -26,7 +27,7 @@ def get_dashboard_alerts():
             })
 
     # 2. Payment due / Udhaar alerts
-    customers = Customer.query.filter_by(store_id=current_user.store_id).all()
+    customers = Customer.query.filter_by(store_id=get_active_store_id()).all()
     udhaar_alerts = []
     for c in customers:
         balance = float(KhataEngine.get_customer_balance(c.customer_id))

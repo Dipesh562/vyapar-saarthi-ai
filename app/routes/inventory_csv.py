@@ -5,7 +5,7 @@ from flask_login import login_required, current_user
 from decimal import Decimal
 from app.extensions import db
 from app.models import Product, Inventory, InventoryMovement
-from app.utils.decorators import require_role
+from app.utils.decorators import require_role, get_active_store_id
 
 inventory_csv_bp = Blueprint('inventory_csv', __name__, url_prefix='/api/v1/products/import')
 
@@ -162,7 +162,7 @@ def confirm_csv_import():
             }
         }), 400
         
-    store_id = current_user.store_id
+    store_id = get_active_store_id()
     success_count = 0
     errors = []
     

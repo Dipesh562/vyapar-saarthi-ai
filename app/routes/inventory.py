@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from app.models import Product, Inventory
 from app.services.inventory_engine import InventoryEngine
-from app.utils.decorators import require_role
+from app.utils.decorators import require_role, get_active_store_id
 
 inventory_bp = Blueprint('inventory', __name__, url_prefix='/api/v1/inventory')
 
@@ -13,7 +13,7 @@ def get_inventory():
     GET /api/v1/inventory
     Returns current stock levels for all products in the store.
     """
-    products = Product.query.filter_by(store_id=current_user.store_id, is_active=True).all()
+    products = Product.query.filter_by(store_id=get_active_store_id(), is_active=True).all()
     result = []
     for p in products:
         inv = p.inventory
@@ -47,7 +47,7 @@ def adjust_inventory(product_id):
 
     try:
         updated_inv = InventoryEngine.adjust_stock(
-            store_id=current_user.store_id,
+            store_id=get_active_store_id(),
             product_id=product_id,
             user_id=current_user.user_id,
             quantity_delta=quantity_delta,
@@ -82,7 +82,7 @@ def get_inventory_history(product_id):
     Returns inventory movement history for a product.
     """
     # Ensure product belongs to store
-    product = Product.query.filter_by(product_id=product_id, store_id=current_user.store_id).first()
+    product = Product.query.filter_by(product_id=product_id, store_id=get_active_store_id()).first()
     if not product:
         return jsonify({
             "error": {
@@ -93,7 +93,7 @@ def get_inventory_history(product_id):
         
     movements = InventoryMovement.query.filter_by(
         product_id=product_id, 
-        store_id=current_user.store_id
+        store_id=get_active_store_id()
     ).order_by(InventoryMovement.created_at.desc()).all()
     
     result = []

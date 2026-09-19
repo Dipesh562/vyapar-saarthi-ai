@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from app.services.query_router import BusinessAssistantQueryRouter
+from app.utils.decorators import get_active_store_id
 
 assistant_bp = Blueprint('assistant', __name__, url_prefix='/api/v1/assistant')
 
@@ -22,5 +23,5 @@ def query_assistant():
             }
         }), 400
 
-    result = BusinessAssistantQueryRouter.answer_query(current_user.store_id, question)
+    result = BusinessAssistantQueryRouter.answer_query(get_active_store_id(), question)
     return jsonify(result), 200

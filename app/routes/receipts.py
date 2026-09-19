@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, render_template_string
 from flask_login import login_required, current_user
 from app.models import Transaction, TransactionItem, Store, Customer
+from app.utils.decorators import get_active_store_id
 
 receipts_bp = Blueprint('receipts', __name__, url_prefix='/api/v1/receipts')
 
@@ -87,7 +88,7 @@ def generate_receipt():
             }
         }), 400
 
-    txn = Transaction.query.filter_by(txn_id=txn_id, store_id=current_user.store_id).first()
+    txn = Transaction.query.filter_by(txn_id=txn_id, store_id=get_active_store_id()).first()
     if not txn:
         return jsonify({
             "error": {
@@ -143,7 +144,7 @@ def view_receipt(txn_id):
     GET /api/v1/receipts/{txn_id}/view
     Renders HTML view for receipt link (Store authenticated).
     """
-    txn = Transaction.query.filter_by(txn_id=txn_id, store_id=current_user.store_id).first()
+    txn = Transaction.query.filter_by(txn_id=txn_id, store_id=get_active_store_id()).first()
     if not txn:
         return "Receipt Not Found", 404
 

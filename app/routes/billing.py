@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from app.services.billing_engine import BillingEngine
 from app.services.cart_session import MerchantCartSession
+from app.utils.decorators import get_active_store_id
 
 billing_bp = Blueprint('billing', __name__, url_prefix='/api/v1/billing')
 
@@ -28,7 +29,7 @@ def create_draft_bill():
     final_items = items
 
     if draft_bill_id:
-        existing_draft = BillingEngine.get_draft_bill(draft_bill_id, current_user.store_id)
+        existing_draft = BillingEngine.get_draft_bill(draft_bill_id, get_active_store_id())
         if existing_draft:
             # Extract existing items
             existing_items_input = [{'product_id': item['product_id'], 'quantity': item['quantity']} for item in existing_draft.get('line_items', [])]
@@ -44,18 +45,18 @@ def create_draft_bill():
             if not customer_id:
                 customer_id = existing_draft.get('customer_id')
                 
-            BillingEngine.void_draft_bill(draft_bill_id, current_user.store_id)
+            BillingEngine.void_draft_bill(draft_bill_id, get_active_store_id())
 
     try:
         draft = BillingEngine.create_draft_bill(
-            store_id=current_user.store_id,
+            store_id=get_active_store_id(),
             items=final_items,
             customer_id=customer_id
         )
         from app.services.voice_feedback import VoiceFeedbackService
         draft['readback_text'] = VoiceFeedbackService.build_readback_text(draft)
         # Keep MerchantCartSession in sync so "add more" follow-ups resolve correctly
-        MerchantCartSession.update_cart(current_user.store_id, final_items)
+        MerchantCartSession.update_cart(get_active_store_id(), final_items)
         return jsonify(draft), 201
 
     except ValueError as ve:
@@ -107,7 +108,7 @@ def confirm_bill():
 
     try:
         result = BillingEngine.confirm_bill(
-            store_id=current_user.store_id,
+            store_id=get_active_store_id(),
             user_id=current_user.user_id,
             draft_bill_id=draft_bill_id,
             payment_status=payment_status,
@@ -163,7 +164,7 @@ def void_draft_bill(draft_bill_id):
     DELETE /api/v1/billing/{draft_bill_id}
     Voids a draft bill prior to payment confirmation (PRD §12).
     """
-    success = BillingEngine.void_draft_bill(draft_bill_id, current_user.store_id)
+    success = BillingEngine.void_draft_bill(draft_bill_id, get_active_store_id())
     if not success:
         return jsonify({
             "error": {

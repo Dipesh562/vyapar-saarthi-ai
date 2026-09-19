@@ -1,6 +1,7 @@
 from functools import wraps
-from flask import jsonify
+from flask import jsonify, session, abort
 from flask_login import current_user
+
 
 def require_role(*allowed_roles):
     """
@@ -29,3 +30,31 @@ def require_role(*allowed_roles):
             return fn(*args, **kwargs)
         return wrapper
     return decorator
+
+
+def get_active_store_id() -> int:
+    """
+    Returns the store_id that is currently active for this session.
+
+    Resolution order:
+      1. If session['active_store_id'] is set AND the current user owns that store → use it.
+      2. Otherwise fall back to current_user.store_id (home store).
+
+    Raises 403 JSON error if the user tries to access a store they do not own.
+    This is the single point of truth for all store-scoped API calls.
+    """
+    if not current_user.is_authenticated:
+        return abort(401)
+
+    requested_id = session.get('active_store_id')
+    if requested_id is None:
+        return current_user.store_id
+
+    # Validate ownership — check the OwnerStore junction table
+    accessible = current_user.accessible_store_ids
+    if requested_id not in accessible:
+        # Session is stale or tampered — reset and fall back to home store
+        session.pop('active_store_id', None)
+        return current_user.store_id
+
+    return requested_id

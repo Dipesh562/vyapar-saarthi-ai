@@ -10,6 +10,7 @@ from app.models.inventory_movement import InventoryMovement
 from app.models.voice_session import VoiceSession
 from app.models.product_synonym import ProductSynonym
 from app.models.draft_bill import DraftBill, BillingIdempotency
+from app.models.owner_store import OwnerStore
 
 __all__ = [
     'Store',
@@ -27,4 +28,5 @@ __all__ = [
     'ProductSynonym',
     'DraftBill',
     'BillingIdempotency',
+    'OwnerStore',
 ]

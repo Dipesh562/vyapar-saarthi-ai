@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from app.extensions import db
 from app.models import Customer, KhataEntry
 from app.services.khata_engine import KhataEngine
+from app.utils.decorators import get_active_store_id
 
 customers_bp = Blueprint('customers', __name__, url_prefix='/api/v1/customers')
 
@@ -13,7 +14,7 @@ def list_customers():
     GET /api/v1/customers
     List customers in store along with dynamically derived Khata balance.
     """
-    customers = Customer.query.filter_by(store_id=current_user.store_id).all()
+    customers = Customer.query.filter_by(store_id=get_active_store_id()).all()
     result = []
     for c in customers:
         balance = KhataEngine.get_customer_balance(c.customer_id)
@@ -45,8 +46,8 @@ def create_customer():
         }), 400
 
     # Duplicate detection (PRD §14)
-    existing_by_phone = Customer.query.filter_by(store_id=current_user.store_id, phone=phone).first() if phone else None
-    existing_by_name = Customer.query.filter_by(store_id=current_user.store_id, name=name).first()
+    existing_by_phone = Customer.query.filter_by(store_id=get_active_store_id(), phone=phone).first() if phone else None
+    existing_by_name = Customer.query.filter_by(store_id=get_active_store_id(), name=name).first()
 
     possible_duplicates = []
     if existing_by_phone:
@@ -55,7 +56,7 @@ def create_customer():
         possible_duplicates.append({"customer_id": existing_by_name.customer_id, "name": existing_by_name.name, "phone": existing_by_name.phone, "reason": "same_name"})
 
     customer = Customer(
-        store_id=current_user.store_id,
+        store_id=get_active_store_id(),
         name=name,
         phone=phone
     )
@@ -83,7 +84,7 @@ def get_customer_khata(customer_id):
     GET /api/v1/customers/{id}/khata
     Returns customer's running Udhaar balance and transaction history.
     """
-    customer = Customer.query.filter_by(customer_id=customer_id, store_id=current_user.store_id).first()
+    customer = Customer.query.filter_by(customer_id=customer_id, store_id=get_active_store_id()).first()
     if not customer:
         return jsonify({
             "error": {
