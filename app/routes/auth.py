@@ -287,7 +287,14 @@ def login():
 
     login_user(user)
 
-    # For owners: check if they have multiple stores → signal store picker needed
+    # For owners: ensure primary store_id has an OwnerStore junction record
+    if user.role == 'owner' and user.store_id:
+        existing_link = OwnerStore.query.filter_by(owner_id=user.user_id, store_id=user.store_id).first()
+        if not existing_link:
+            link = OwnerStore(owner_id=user.user_id, store_id=user.store_id, is_primary=True)
+            db.session.add(link)
+            db.session.commit()
+
     owned_count = 0
     requires_store_selection = False
     if user.role == 'owner':

@@ -2548,7 +2548,7 @@
 
         async function switchActiveStore(storeId, storeName) {
             try {
-                const res = await fetch(`/api/v1/stores/switch/${storeId}`, {
+                const res = await fetch(`/api/v1/stores/${storeId}/switch`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'}
                 });

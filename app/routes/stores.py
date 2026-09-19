@@ -190,6 +190,7 @@ def update_store(store_id):
 # Switch active store for this session.
 # ---------------------------------------------------------------------------
 @stores_bp.route('/<int:store_id>/switch', methods=['POST'])
+@stores_bp.route('/switch/<int:store_id>', methods=['POST'])
 @require_role('owner')
 def switch_to_store(store_id):
     """
