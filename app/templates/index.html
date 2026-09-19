@@ -1380,6 +1380,11 @@
                 <div class="nav-icon"><i class="fa-solid fa-address-book"></i></div>
                 Customers / Khata
             </a>
+            <div class="nav-section-label">Management</div>
+            <a class="nav-item" onclick="openStoresModal()" href="#">
+                <div class="nav-icon"><i class="fa-solid fa-store"></i></div>
+                My Stores / Outlets
+            </a>
             <div class="nav-section-label">Insights</div>
             <a class="nav-item" onclick="showSection('sales')" href="#">
                 <div class="nav-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
@@ -1392,11 +1397,11 @@
         </nav>
 
         <div class="sidebar-profile">
-            <div class="store-badge">
-                <div class="store-avatar">KK</div>
-                <div>
-                    <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;color:var(--text);" id="store-name-display">Karvenagar Kirana</div>
-                    <div style="font-family:'Inter',sans-serif;font-size:11px;color:var(--text-secondary);" id="user-role-badge">Owner</div>
+            <div class="store-badge" onclick="openStoresModal()" style="cursor:pointer" title="Click to switch or manage stores">
+                <div class="store-avatar" id="store-avatar-display">KK</div>
+                <div style="flex:1;min-width:0">
+                    <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="store-name-display">Karvenagar Kirana</div>
+                    <div style="font-family:'Inter',sans-serif;font-size:11px;color:var(--primary);font-weight:600;" id="user-role-badge">Owner • Switch <i class="fa-solid fa-chevron-right" style="font-size:9px"></i></div>
                 </div>
             </div>
         </div>
@@ -1408,10 +1413,18 @@
         <!-- TOP HEADER -->
         <div class="top-header">
             <div>
-                <div class="greeting">Good morning, Ramesh! 👋</div>
-                <div class="store-label"><i class="fa-solid fa-location-dot me-1" style="color:var(--primary)"></i>Karvenagar Kirana, Pune</div>
+                <div class="greeting" id="header-greeting-user">Good morning, Ramesh! 👋</div>
+                <div class="store-label" onclick="openStoresModal()" style="cursor:pointer" title="Click to switch active store">
+                    <i class="fa-solid fa-store me-1" style="color:var(--primary)"></i>
+                    <span id="header-store-name" style="font-weight:700;color:var(--text)">Karvenagar Kirana</span>
+                    <span id="header-store-address" style="color:var(--text-muted);font-weight:400;margin-left:4px"></span>
+                    <i class="fa-solid fa-chevron-down ms-1" style="font-size:11px;color:var(--primary)"></i>
+                </div>
             </div>
             <div class="d-flex align-items-center gap-2">
+                <button class="btn-vs-primary" onclick="showAddStoreModal()" style="height:38px;padding:0 14px;font-size:13px">
+                    <i class="fa-solid fa-plus me-1"></i> Add Store
+                </button>
                 <button class="btn-ghost" onclick="autoLoginOwner()" style="background:var(--surface2);border:none;border-radius:8px;padding:8px 14px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:var(--text-secondary);cursor:pointer;" title="Refresh Data">
                     <i class="fa-solid fa-arrows-rotate me-1"></i> Refresh
                 </button>
@@ -2093,6 +2106,77 @@
         </div>
     </div>
 
+    <!-- ═══ MANAGE STORES & SWITCHER MODAL ════════════════════════ -->
+    <div class="modal fade" id="modalStores" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content-vs modal-content border-0">
+                <div class="modal-header-vs">
+                    <div>
+                        <h5 class="mb-0"><i class="fa-solid fa-store me-2" style="color:var(--primary)"></i>My Stores & Branches</h5>
+                        <p class="mb-0" style="font-size:12px;color:var(--text-secondary)">Manage your shops or switch active outlet session</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="btn-vs-primary" onclick="showAddStoreModal()" style="height:36px;padding:0 14px;font-size:12px">
+                            <i class="fa-solid fa-plus me-1"></i> Add New Store
+                        </button>
+                        <button class="close-btn" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                </div>
+                <div class="modal-body-vs">
+                    <div id="stores-list-container" class="d-flex flex-column gap-3">
+                        <div class="text-center py-4 text-muted">
+                            <i class="fa-solid fa-spinner fa-spin me-2"></i> Loading stores...
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer-vs">
+                    <button class="btn-vs-ghost" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ ADD NEW STORE MODAL ═══════════════════════════════════ -->
+    <div class="modal fade" id="modalAddStore" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content-vs modal-content border-0">
+                <div class="modal-header-vs">
+                    <h5><i class="fa-solid fa-shop me-2" style="color:var(--green)"></i>Add New Shop / Outlet</h5>
+                    <button class="close-btn" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body-vs">
+                    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px">
+                        Register a new store under your account. Inventory and sales are maintained independently for each store.
+                    </p>
+                    <div class="form-group-vs">
+                        <label class="label-vs">Store / Shop Name <span class="required">*</span></label>
+                        <input type="text" id="new-store-name" class="input-vs" placeholder="e.g. Kothrud Super Market">
+                    </div>
+                    <div class="form-group-vs">
+                        <label class="label-vs">Address / Location</label>
+                        <input type="text" id="new-store-address" class="input-vs" placeholder="e.g. Shop 12, DP Road, Kothrud, Pune">
+                    </div>
+                    <div class="form-row-2">
+                        <div class="form-group-vs">
+                            <label class="label-vs">Phone Number</label>
+                            <input type="text" id="new-store-phone" class="input-vs" placeholder="e.g. +91 9876543211">
+                        </div>
+                        <div class="form-group-vs">
+                            <label class="label-vs">GSTIN (Optional)</label>
+                            <input type="text" id="new-store-gstin" class="input-vs" placeholder="e.g. 27AAACW1234F1Z5">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer-vs">
+                    <button class="btn-vs-ghost" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn-vs-primary" onclick="submitAddStore()" style="height:44px;padding:0 20px;font-weight:700">
+                        <i class="fa-solid fa-check-circle me-1"></i> Save & Switch to Store
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ═══════════════════════════════════════════════════════════
          SCRIPTS
     ══════════════════════════════════════════════════════════ -->
@@ -2335,7 +2419,207 @@
             }
         }
 
+        /* ═══ STORE MANAGEMENT ═══════════════════════════════════ */
+        let userStoresList = [];
+        let currentActiveStore = null;
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+        }
+
+        function openStoresModal() {
+            const modalEl = document.getElementById('modalStores');
+            if (modalEl) {
+                const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                modal.show();
+            }
+            loadStoresList();
+        }
+
+        function showAddStoreModal() {
+            const storesModalEl = document.getElementById('modalStores');
+            if (storesModalEl) {
+                const storesModal = bootstrap.Modal.getInstance(storesModalEl);
+                if (storesModal) storesModal.hide();
+            }
+
+            document.getElementById('new-store-name').value = '';
+            document.getElementById('new-store-address').value = '';
+            document.getElementById('new-store-phone').value = '';
+            document.getElementById('new-store-gstin').value = '';
+
+            const addModalEl = document.getElementById('modalAddStore');
+            if (addModalEl) {
+                const addModal = bootstrap.Modal.getOrCreateInstance(addModalEl);
+                addModal.show();
+            }
+        }
+
+        async function loadStoresList() {
+            try {
+                const res = await fetch('/api/v1/stores');
+                if (!res.ok) return;
+                const data = await res.json();
+                userStoresList = data.stores || [];
+                const activeId = data.active_store_id;
+
+                const container = document.getElementById('stores-list-container');
+                if (!container) return;
+
+                if (userStoresList.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon"><i class="fa-solid fa-store"></i></div>
+                            <h4>No Stores Found</h4>
+                            <p>Click "Add New Store" to create your first store.</p>
+                            <button class="btn-vs-primary" onclick="showAddStoreModal()"><i class="fa-solid fa-plus me-1"></i>Add Store</button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '';
+                userStoresList.forEach(store => {
+                    const isActive = store.is_active_now || store.store_id === activeId;
+                    if (isActive) {
+                        currentActiveStore = store;
+                        updateStoreHeaderUI(store);
+                    }
+
+                    const initials = (store.name || 'ST').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+
+                    html += `
+                        <div class="p-3 border rounded-3 d-flex align-items-center justify-content-between ${isActive ? 'bg-light border-primary' : 'bg-white'}" style="${isActive ? 'border-width:2px !important;' : ''}">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="store-avatar" style="width:48px;height:48px;font-size:16px;background:${isActive ? 'linear-gradient(135deg, var(--primary) 0%, #3B82F6 100%)' : 'var(--surface2)'};color:${isActive ? 'white' : 'var(--text)'}">
+                                    ${initials}
+                                </div>
+                                <div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <h6 class="mb-0 font-headline font-weight-bold" style="font-size:15px;color:var(--text);">${escapeHtml(store.name)}</h6>
+                                        ${isActive ? '<span class="badge-vs badge-vs-green"><i class="fa-solid fa-circle-check me-1"></i>Active Session</span>' : ''}
+                                        ${store.is_primary ? '<span class="badge-vs badge-vs-blue">Primary</span>' : ''}
+                                    </div>
+                                    <div style="font-size:12px;color:var(--text-secondary);margin-top:2px">
+                                        ${store.address ? `<i class="fa-solid fa-location-dot me-1"></i>${escapeHtml(store.address)}` : 'No address specified'}
+                                        ${store.phone ? ` • <i class="fa-solid fa-phone me-1"></i>${escapeHtml(store.phone)}` : ''}
+                                        ${store.gstin ? ` • GST: ${escapeHtml(store.gstin)}` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                ${isActive ? `
+                                    <button class="btn-vs-ghost text-success" disabled style="opacity:0.9">
+                                        <i class="fa-solid fa-check me-1"></i> Current Store
+                                    </button>
+                                ` : `
+                                    <button class="btn-vs-primary" onclick="switchActiveStore(${store.store_id}, '${escapeHtml(store.name)}')" style="height:36px;font-size:12px;padding:0 14px">
+                                        <i class="fa-solid fa-arrow-right-to-bracket me-1"></i> Switch to Store
+                                    </button>
+                                `}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+            } catch (e) {
+                console.error("Error loading stores list:", e);
+            }
+        }
+
+        function updateStoreHeaderUI(store) {
+            if (!store) return;
+            const initials = (store.name || 'ST').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+
+            const headerName = document.getElementById('header-store-name');
+            if (headerName) headerName.innerText = store.name;
+
+            const headerAddr = document.getElementById('header-store-address');
+            if (headerAddr) headerAddr.innerText = store.address ? `• ${store.address}` : '';
+
+            const sidebarName = document.getElementById('store-name-display');
+            if (sidebarName) sidebarName.innerText = store.name;
+
+            const sidebarAvatar = document.getElementById('store-avatar-display');
+            if (sidebarAvatar) sidebarAvatar.innerText = initials;
+        }
+
+        async function switchActiveStore(storeId, storeName) {
+            try {
+                const res = await fetch(`/api/v1/stores/switch/${storeId}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'}
+                });
+
+                if (res.ok) {
+                    showToast(`Switched active session to "${storeName}"`, 'success');
+                    
+                    const storesModalEl = document.getElementById('modalStores');
+                    if (storesModalEl) {
+                        const storesModal = bootstrap.Modal.getInstance(storesModalEl);
+                        if (storesModal) storesModal.hide();
+                    }
+
+                    loadStoresList();
+                    refreshAllData();
+                } else {
+                    const err = await res.json();
+                    showToast(err.error?.message || 'Failed to switch store', 'error');
+                }
+            } catch (e) {
+                console.error("Switch store error:", e);
+                showToast("Connection error while switching store.", 'error');
+            }
+        }
+
+        async function submitAddStore() {
+            const name = document.getElementById('new-store-name').value.trim();
+            const address = document.getElementById('new-store-address').value.trim();
+            const phone = document.getElementById('new-store-phone').value.trim();
+            const gstin = document.getElementById('new-store-gstin').value.trim();
+
+            if (!name) {
+                showToast("Please enter a store name.", 'error');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/v1/stores', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        name: name,
+                        address: address,
+                        phone: phone,
+                        gstin: gstin
+                    })
+                });
+
+                if (res.ok) {
+                    showToast(`Store "${name}" created and set as active!`, 'success');
+
+                    const addModalEl = document.getElementById('modalAddStore');
+                    if (addModalEl) {
+                        const addModal = bootstrap.Modal.getInstance(addModalEl);
+                        if (addModal) addModal.hide();
+                    }
+
+                    await loadStoresList();
+                    refreshAllData();
+                } else {
+                    const err = await res.json();
+                    showToast(err.error?.message || 'Failed to create store', 'error');
+                }
+            } catch (e) {
+                console.error("Create store error:", e);
+                showToast("Failed to create store. Please check connection.", 'error');
+            }
+        }
+
         async function refreshAllData() {
+            loadStoresList();
             loadStats();
             loadInventory();
             loadKhata();
