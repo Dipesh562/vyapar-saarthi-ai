@@ -88,6 +88,8 @@ def create_app(config_class=Config):
                     if os.path.exists(db_path):
                         conn = sqlite3.connect(db_path)
                         cur = conn.cursor()
+                        
+                        # 1. Stores table columns
                         cur.execute("PRAGMA table_info(stores);")
                         existing_cols = [c[1] for c in cur.fetchall()]
                         if existing_cols:
@@ -97,7 +99,19 @@ def create_app(config_class=Config):
                                 cur.execute("ALTER TABLE stores ADD COLUMN gstin VARCHAR(20);")
                             if 'is_active' not in existing_cols:
                                 cur.execute("ALTER TABLE stores ADD COLUMN is_active BOOLEAN DEFAULT 1;")
-                            conn.commit()
+
+                        # 2. Product_synonyms table columns
+                        cur.execute("PRAGMA table_info(product_synonyms);")
+                        syn_cols = [c[1] for c in cur.fetchall()]
+                        if syn_cols:
+                            if 'evidence_count' not in syn_cols:
+                                cur.execute("ALTER TABLE product_synonyms ADD COLUMN evidence_count INTEGER DEFAULT 1;")
+                            if 'last_confirmed_at' not in syn_cols:
+                                cur.execute("ALTER TABLE product_synonyms ADD COLUMN last_confirmed_at DATETIME;")
+                            if 'is_auto_learned' not in syn_cols:
+                                cur.execute("ALTER TABLE product_synonyms ADD COLUMN is_auto_learned BOOLEAN DEFAULT 0;")
+
+                        conn.commit()
                         conn.close()
             except Exception:
                 pass
