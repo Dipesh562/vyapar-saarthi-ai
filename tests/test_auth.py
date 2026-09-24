@@ -110,3 +110,45 @@ def test_register_helper_returns_not_implemented(client):
     })
     assert res.status_code == 501
     assert res.get_json()['error']['code'] == 'NOT_IMPLEMENTED'
+
+
+def test_delete_store_workflow(client):
+    """
+    Tests deleting a secondary store:
+    - Cannot delete primary store.
+    - Successfully soft-deletes a secondary store.
+    - Cannot delete the last remaining active store.
+    """
+    # 1. Register owner (Primary Store A)
+    res = client.post('/api/v1/auth/register_owner', json={
+        "store_name": "Primary Store A",
+        "name": "Owner A",
+        "phone": "9000000099",
+        "password": "pass"
+    })
+    store_a_id = res.get_json()['store']['store_id']
+
+    # 2. Add Secondary Store B
+    res_b = client.post('/api/v1/stores', json={"name": "Secondary Store B"})
+    assert res_b.status_code == 201
+    store_b_id = res_b.get_json()['store']['store_id']
+
+    # 3. Attempt to delete primary store -> 400
+    res_del_pri = client.delete(f'/api/v1/stores/{store_a_id}')
+    assert res_del_pri.status_code == 400
+    assert res_del_pri.get_json()['error']['code'] == 'CANNOT_DELETE_PRIMARY'
+
+    # 4. Delete secondary store B -> 200
+    res_del_b = client.delete(f'/api/v1/stores/{store_b_id}')
+    assert res_del_b.status_code == 200
+
+    # 5. List stores -> Store B should not be present
+    res_list = client.get('/api/v1/stores')
+    store_ids = [s['store_id'] for s in res_list.get_json()['stores']]
+    assert store_b_id not in store_ids
+    assert store_a_id in store_ids
+
+    # 6. Attempt to delete last remaining active store -> 400
+    res_del_last = client.delete(f'/api/v1/stores/{store_a_id}')
+    assert res_del_last.status_code == 400
+    assert res_del_last.get_json()['error']['code'] == 'CANNOT_DELETE_PRIMARY'

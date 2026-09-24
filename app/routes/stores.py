@@ -42,14 +42,14 @@ def _assert_owns_store(store_id: int):
 @require_role('owner')
 def list_stores():
     """
-    Returns all stores the logged-in owner owns, with active store marked.
+    Returns all active stores the logged-in owner owns, with active store marked.
     """
     active_id = get_active_store_id()
     memberships = OwnerStore.query.filter_by(owner_id=current_user.user_id).all()
     result = []
     for m in memberships:
         store = Store.query.get(m.store_id)
-        if store:
+        if store and store.is_active:
             result.append(_store_dict(store, is_primary=m.is_primary, active_store_id=active_id))
 
     return jsonify({
@@ -253,12 +253,13 @@ def delete_store(store_id):
             }
         }), 400
 
-    total_stores = OwnerStore.query.filter_by(owner_id=current_user.user_id).count()
-    if total_stores <= 1:
+    all_memberships = OwnerStore.query.filter_by(owner_id=current_user.user_id).all()
+    active_stores_count = sum(1 for m in all_memberships if (s := Store.query.get(m.store_id)) and s.is_active)
+    if active_stores_count <= 1:
         return jsonify({
             "error": {
                 "code": "LAST_STORE",
-                "message": "You cannot delete your only store."
+                "message": "You cannot delete your only active store."
             }
         }), 400
 

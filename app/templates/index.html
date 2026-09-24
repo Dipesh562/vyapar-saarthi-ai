@@ -2508,7 +2508,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div>
+                            <div class="d-flex align-items-center gap-2">
                                 ${isActive ? `
                                     <button class="btn-vs-ghost text-success" disabled style="opacity:0.9">
                                         <i class="fa-solid fa-check me-1"></i> Current Store
@@ -2518,6 +2518,11 @@
                                         <i class="fa-solid fa-arrow-right-to-bracket me-1"></i> Switch to Store
                                     </button>
                                 `}
+                                ${!store.is_primary && userStoresList.length > 1 ? `
+                                    <button class="btn-icon danger" onclick="confirmDeleteStore(${store.store_id}, '${escapeHtml(store.name)}')" title="Delete Store">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                ` : ''}
                             </div>
                         </div>
                     `;
@@ -2608,13 +2613,34 @@
 
                     await loadStoresList();
                     refreshAllData();
-                } else {
-                    const err = await res.json();
-                    showToast(err.error?.message || 'Failed to create store', 'error');
                 }
             } catch (e) {
                 console.error("Create store error:", e);
                 showToast("Failed to create store. Please check connection.", 'error');
+            }
+        }
+
+        async function confirmDeleteStore(storeId, storeName) {
+            if (!confirm(`Are you sure you want to delete store "${storeName}"?\n\nThis will deactivate the store from your account.`)) {
+                return;
+            }
+            try {
+                const res = await fetch(`/api/v1/stores/${storeId}`, {
+                    method: 'DELETE',
+                    headers: {'Content-Type': 'application/json'}
+                });
+
+                if (res.ok) {
+                    showToast(`Store "${storeName}" deleted successfully.`, 'success');
+                    await loadStoresList();
+                    refreshAllData();
+                } else {
+                    const err = await res.json();
+                    showToast(err.error?.message || 'Failed to delete store.', 'error');
+                }
+            } catch (e) {
+                console.error("Delete store error:", e);
+                showToast("Connection error while deleting store.", 'error');
             }
         }
 
