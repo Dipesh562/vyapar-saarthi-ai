@@ -871,14 +871,14 @@
 
         .voice-input-area input::placeholder { color: var(--text-muted); }
 
-        /* ═══ BILL PREVIEW ══════════════════════════════════════ */
+        /* ═══ BILL PREVIEW & DRAFT EDITING ══════════════════════ */
         .bill-item-row {
             display: grid;
-            grid-template-columns: 1fr 80px 80px 80px;
-            gap: 8px;
+            grid-template-columns: 1fr 105px 65px 70px 32px;
+            gap: 6px;
             padding: 10px 0;
             border-bottom: 1px solid var(--border);
-            font-size: 14px;
+            font-size: 13px;
             align-items: center;
         }
 
@@ -887,7 +887,129 @@
         .bill-item-name {
             font-family: 'Plus Jakarta Sans', sans-serif;
             font-weight: 600;
+            font-size: 13px;
+            color: var(--text);
+            line-height: 1.2;
         }
+
+        .bill-item-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .qty-control-group {
+            display: flex;
+            align-items: center;
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            height: 30px;
+        }
+
+        .qty-btn {
+            width: 24px;
+            height: 100%;
+            border: none;
+            background: transparent;
+            color: var(--text);
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s;
+        }
+
+        .qty-btn:hover { background: rgba(0,0,0,0.08); }
+
+        .qty-input {
+            width: 42px;
+            height: 100%;
+            border: none;
+            border-left: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            background: white;
+            text-align: center;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--text);
+            outline: none;
+            -moz-appearance: textfield;
+            padding: 0;
+        }
+
+        .qty-input::-webkit-outer-spin-button,
+        .qty-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .btn-remove-item {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: transparent;
+            color: var(--red);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s;
+        }
+
+        .btn-remove-item:hover { background: #FEE2E2; }
+
+        .quick-add-bar {
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .quick-add-bar input {
+            padding-left: 36px;
+        }
+
+        .quick-add-search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 13px;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .search-results-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-lg);
+            z-index: 1050;
+            max-height: 220px;
+            overflow-y: auto;
+            margin-top: 4px;
+        }
+
+        .search-result-item {
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-light);
+            transition: background 0.12s;
+        }
+
+        .search-result-item:hover { background: var(--surface2); }
+        .search-result-item:last-child { border-bottom: none; }
 
         .bill-total-row {
             display: flex;
@@ -1554,10 +1676,22 @@
                     <div>
                         <div class="card-vs">
                             <div class="card-header-vs">
-                                <h5 class="card-title-vs"><i class="fa-solid fa-cart-shopping me-2" style="color:var(--green)"></i>Active Draft Bill</h5>
-                                <span class="badge-vs badge-vs-blue font-inter" id="draft-id-badge" style="font-size:11px">No Draft</span>
+                                <div class="d-flex align-items-center gap-2">
+                                    <h5 class="card-title-vs mb-0"><i class="fa-solid fa-cart-shopping me-2" style="color:var(--green)"></i>Active Draft Bill</h5>
+                                    <span class="badge-vs badge-vs-blue font-inter" id="draft-id-badge" style="font-size:11px">No Draft</span>
+                                </div>
+                                <button class="btn-vs-ghost text-danger p-0" style="font-size:12px;text-decoration:none;" onclick="clearCurrentDraft()" title="Clear bill">
+                                    <i class="fa-solid fa-trash-can me-1"></i>Clear
+                                </button>
                             </div>
                             <div class="card-body-vs">
+
+                                <!-- Quick Product Search & Manual Add -->
+                                <div class="quick-add-bar">
+                                    <i class="fa-solid fa-magnifying-glass quick-add-search-icon"></i>
+                                    <input type="text" id="bill-quick-search" class="input-vs" placeholder="Quick Search & Add Item (e.g. Sugar, Atta)..." onkeyup="onBillSearchInput(this.value)" autocomplete="off">
+                                    <div id="bill-search-dropdown" class="search-results-dropdown d-none"></div>
+                                </div>
 
                                 <!-- Clarification Box -->
                                 <div id="clarification-box" class="clarify-box d-none">
@@ -1571,12 +1705,12 @@
                                     <div id="bill-empty-state" class="empty-state" style="padding:32px 16px;">
                                         <div class="empty-icon" style="width:52px;height:52px;font-size:24px;">🛒</div>
                                         <h4 style="font-size:14px;margin-bottom:4px;">No items yet</h4>
-                                        <p style="font-size:12px;margin-bottom:0">Speak or type your order on the left to add items</p>
+                                        <p style="font-size:12px;margin-bottom:0">Speak or search product above to add items to bill</p>
                                     </div>
                                     <div id="bill-items-list" class="d-none">
                                         <!-- Header row -->
-                                        <div style="display:grid;grid-template-columns:1fr 72px 72px 72px;gap:8px;padding:0 0 8px;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-secondary);border-bottom:1px solid var(--border);">
-                                            <span>Item</span><span>Qty</span><span>Price</span><span style="text-align:right">Total</span>
+                                        <div style="display:grid;grid-template-columns:1fr 105px 65px 70px 32px;gap:6px;padding:0 0 8px;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-secondary);border-bottom:1px solid var(--border);">
+                                            <span>Item</span><span>Qty</span><span>Price</span><span style="text-align:right">Total</span><span></span>
                                         </div>
                                         <div id="cart-items-body"></div>
                                     </div>
@@ -2075,6 +2209,26 @@
         </div>
     </div>
 
+    <!-- Digital Receipt Viewer Modal -->
+    <div class="modal fade" id="modalReceiptViewer" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content-vs modal-content border-0">
+                <div class="modal-header-vs">
+                    <h5><i class="fa-solid fa-file-invoice-dollar me-2" style="color:var(--green)"></i>Generated Bill Receipt</h5>
+                    <button class="close-btn" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body-vs p-0">
+                    <iframe id="receipt-iframe" src="about:blank" style="width:100%;height:440px;border:none;border-radius:0 0 var(--radius-sm) var(--radius-sm)"></iframe>
+                </div>
+                <div class="modal-footer-vs d-flex gap-2">
+                    <button class="btn-vs-secondary" onclick="printReceiptIframe()"><i class="fa-solid fa-print me-1"></i>Print</button>
+                    <a id="receipt-whatsapp-btn" href="#" target="_blank" class="btn-vs-green" style="text-decoration:none;display:none"><i class="fa-brands fa-whatsapp me-1"></i>WhatsApp</a>
+                    <button class="btn-vs-primary" data-bs-dismiss="modal" style="flex:1;justify-content:center"><i class="fa-solid fa-check me-1"></i>Done</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Pre-Checkout Read-Back Confirmation Modal -->
     <div class="modal fade" id="modalReadbackConfirm" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
         <div class="modal-dialog modal-dialog-centered">
@@ -2224,7 +2378,7 @@
             }, 3500);
         }
 
-        /* ═══ SPEECH RECOGNITION ════════════════════════════════ */
+        /* ═══ SPEECH RECOGNITION — Cross-Platform (Desktop + Mobile) ══════ */
         let currentDraftBill = null;
         let isRecording = false;
         let recognition = null;
@@ -2234,9 +2388,34 @@
         let _clarificationQueue = [];
         let _accumulatedClarifiedItems = [];
 
+        // MediaRecorder fallback state (for iOS Safari / Firefox)
+        let _mediaRecorder = null;
+        let _audioChunks = [];
+        let _micStream = null;
+        let _useMediaRecorderFallback = false;
+
+        // Detect if Web Speech API is available (Chrome/Edge/Android Chrome)
+        function _hasSpeechApi() {
+            return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+        }
+
+        // Detect iOS (Safari on iPhone/iPad)
+        function _isIOS() {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             autoLoginOwner();
-            initSpeechRecognition();
+            _useMediaRecorderFallback = !_hasSpeechApi();
+            if (!_useMediaRecorderFallback) {
+                initSpeechRecognition();
+            }
+            // Update voice recording status hint
+            if (_isIOS() || _useMediaRecorderFallback) {
+                setMicStatus('Tap mic to start recording (audio mode)', '');
+                const langBtn = document.getElementById('voice-lang-toggle');
+                if (langBtn) langBtn.style.display = 'none'; // lang toggle irrelevant for server-side STT
+            }
         });
 
         function toggleSpeechLang() {
@@ -2263,15 +2442,12 @@
 
         function initSpeechRecognition() {
             const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRec) {
-                console.warn('Web Speech API not supported in this browser.');
-                return;
-            }
+            if (!SpeechRec) { _useMediaRecorderFallback = true; return; }
 
             recognition = new SpeechRec();
-            recognition.continuous = true;        // ← KEEP LISTENING (don't stop after 1 sec pause)
-            recognition.interimResults = true;    // ← Show live transcript as user speaks
-            recognition.lang = selectedSpeechLang; // Default: hi-IN, mr-IN, or en-IN
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = selectedSpeechLang;
             recognition.maxAlternatives = 1;
 
             recognition.onstart = () => {
@@ -2284,11 +2460,8 @@
                     '<strong>Listening... Speak your order</strong>',
                     'Tap mic again to stop and process'
                 );
-                // Show the DONE button while recording
                 const doneBtn = document.getElementById('mic-done-btn');
                 if (doneBtn) doneBtn.classList.remove('d-none');
-
-                // Auto-stop after 30 seconds max
                 micAutoStopTimer = setTimeout(() => {
                     if (isRecording) stopAndProcessVoice();
                 }, 30000);
@@ -2304,10 +2477,8 @@
                         interim += event.results[i][0].transcript;
                     }
                 }
-                // Show live transcript in the input box
                 const inputBox = document.getElementById('voice-input-text');
                 inputBox.value = (finalTranscript + interim).trim();
-                // Update status with interim text
                 if (interim) {
                     setMicStatus(
                         '<i class="fa-solid fa-circle" style="color:var(--red)"></i> ' +
@@ -2325,12 +2496,8 @@
                 const doneBtn = document.getElementById('mic-done-btn');
                 if (doneBtn) doneBtn.classList.add('d-none');
                 setMicStatus('Tap mic to start speaking', '');
-
-                // If we have a transcript, auto-process it
                 const inputVal = document.getElementById('voice-input-text').value.trim();
-                if (inputVal) {
-                    processVoiceInputText();
-                }
+                if (inputVal) { processVoiceInputText(); }
             };
 
             recognition.onerror = (e) => {
@@ -2341,13 +2508,12 @@
                 const doneBtn = document.getElementById('mic-done-btn');
                 if (doneBtn) doneBtn.classList.add('d-none');
                 setMicStatus('Tap mic to start speaking', '');
-
                 const errorMessages = {
                     'no-speech':        'No speech detected. Please tap and speak clearly.',
                     'audio-capture':    'Microphone not found. Please check your mic connection.',
                     'not-allowed':      'Microphone permission denied. Please allow mic access in browser settings.',
                     'network':          'Network error. Voice recognition needs internet connection.',
-                    'aborted':          '',   // silent — user manually stopped
+                    'aborted':          '',
                     'service-not-allowed': 'Speech service not allowed on this browser.',
                 };
                 const msg = errorMessages[e.error];
@@ -2356,14 +2522,135 @@
             };
         }
 
+        /* ── MediaRecorder fallback (iOS Safari, Firefox, etc.) ── */
+        async function _startMediaRecorder() {
+            try {
+                _micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            } catch (err) {
+                if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                    showToast('Microphone permission denied. Please allow mic access in your browser settings.', 'error');
+                } else {
+                    showToast('Could not access microphone: ' + err.message, 'error');
+                }
+                return;
+            }
+
+            // Pick the best supported MIME type (wav/webm/ogg)
+            const mimeTypes = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4'];
+            const mimeType = mimeTypes.find(t => MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) || '';
+            _audioChunks = [];
+            _mediaRecorder = new MediaRecorder(_micStream, mimeType ? { mimeType } : {});
+
+            _mediaRecorder.ondataavailable = (e) => {
+                if (e.data && e.data.size > 0) _audioChunks.push(e.data);
+            };
+
+            _mediaRecorder.onstop = async () => {
+                // Stop mic stream tracks
+                if (_micStream) { _micStream.getTracks().forEach(t => t.stop()); _micStream = null; }
+
+                isRecording = false;
+                document.getElementById('mic-btn').classList.remove('listening');
+                document.getElementById('mic-icon').className = 'fa-solid fa-microphone';
+                const doneBtn = document.getElementById('mic-done-btn');
+                if (doneBtn) doneBtn.classList.add('d-none');
+                setMicStatus('<i class="fa-solid fa-spinner fa-spin me-1"></i> Processing audio...', 'Sending to AI...');
+
+                const blob = new Blob(_audioChunks, { type: mimeType || 'audio/webm' });
+                _audioChunks = [];
+
+                // Upload audio for server-side STT
+                const formData = new FormData();
+                formData.append('audio', blob, 'recording.webm');
+                formData.append('language_hint', selectedSpeechLang);
+
+                try {
+                    const sttRes = await fetch('/api/v1/voice/transcribe', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const sttData = await sttRes.json();
+
+                    if (!sttRes.ok || sttData.error) {
+                        const msg = sttData.error?.message || 'Could not understand audio. Please try again.';
+                        showToast(msg, 'error');
+                        setMicStatus('Tap mic to start recording', '');
+                        return;
+                    }
+
+                    const transcript = sttData.transcript || '';
+                    if (!transcript) {
+                        showToast('No speech detected. Please try speaking again.', 'error');
+                        setMicStatus('Tap mic to start recording', '');
+                        return;
+                    }
+
+                    // Fill text box and process
+                    document.getElementById('voice-input-text').value = transcript;
+                    setMicStatus('Tap mic to start recording', '');
+                    processVoiceInputText();
+
+                } catch (e) {
+                    console.error('STT upload error:', e);
+                    showToast('Failed to process audio. Please check your connection.', 'error');
+                    setMicStatus('Tap mic to start recording', '');
+                }
+            };
+
+            _mediaRecorder.start();
+            isRecording = true;
+            document.getElementById('mic-btn').classList.add('listening');
+            document.getElementById('mic-icon').className = 'fa-solid fa-microphone-lines';
+            setMicStatus(
+                '<i class="fa-solid fa-circle" style="color:var(--red);animation:mic-blink 1s infinite"></i> ' +
+                '<strong>Recording... Speak your order</strong>',
+                'Tap mic again to stop and send'
+            );
+            const doneBtn = document.getElementById('mic-done-btn');
+            if (doneBtn) doneBtn.classList.remove('d-none');
+
+            // Auto-stop after 30 seconds
+            micAutoStopTimer = setTimeout(() => {
+                if (isRecording && _mediaRecorder && _mediaRecorder.state !== 'inactive') {
+                    _mediaRecorder.stop();
+                }
+            }, 30000);
+        }
+
+        function _stopMediaRecorder() {
+            clearTimeout(micAutoStopTimer);
+            if (_mediaRecorder && _mediaRecorder.state !== 'inactive') {
+                _mediaRecorder.stop();
+            }
+        }
+
         function setMicStatus(html, subText) {
             const el = document.getElementById('recording-status');
             if (el) el.innerHTML = html + (subText ? `<br><small style="color:var(--text-muted)">${subText}</small>` : '');
         }
 
         function toggleVoiceRecording() {
+            if (_useMediaRecorderFallback) {
+                // MediaRecorder path — for iOS / Firefox
+                if (!navigator.mediaDevices || !window.MediaRecorder) {
+                    showToast('Audio recording not supported on this browser. Please type your order in the text box below.', 'error');
+                    document.getElementById('voice-input-text').focus();
+                    return;
+                }
+                if (isRecording) {
+                    _stopMediaRecorder();
+                } else {
+                    showSection('billing');
+                    document.getElementById('voice-input-text').value = '';
+                    _startMediaRecorder();
+                }
+                return;
+            }
+
+            // Web Speech API path — Chrome / Edge / Android Chrome
             if (!recognition) {
-                showToast("Voice recognition is not supported in this browser. Please use Chrome or Edge and try the text input below.", 'error');
+                showToast('Voice recognition is not supported in this browser. Please type your order in the text box below.', 'error');
+                document.getElementById('voice-input-text').focus();
                 return;
             }
             if (isRecording) {
@@ -2381,7 +2668,9 @@
         }
 
         function stopAndProcessVoice() {
-            if (recognition && isRecording) {
+            if (_useMediaRecorderFallback) {
+                _stopMediaRecorder();
+            } else if (recognition && isRecording) {
                 recognition.stop();
             }
         }
@@ -3169,12 +3458,26 @@
             tbody.innerHTML = '';
 
             draft.line_items.forEach(item => {
+                const isDecUnit = (item.unit === 'kg' || item.unit === 'liter' || item.unit === 'litre');
+                const step = isDecUnit ? 0.5 : 1;
                 tbody.innerHTML += `
                     <div class="bill-item-row">
-                        <div class="bill-item-name">${escapeHtml(item.name)}</div>
-                        <div style="color:var(--text-secondary);font-size:13px">${item.quantity} ${escapeHtml(item.unit)}</div>
-                        <div style="font-size:13px">₹${item.unit_price.toFixed(2)}</div>
+                        <div>
+                            <div class="bill-item-name">${escapeHtml(item.name)}</div>
+                            <div class="bill-item-meta">${escapeHtml(item.unit)}</div>
+                        </div>
+                        <div class="qty-control-group">
+                            <button class="qty-btn" onclick="changeDraftItemQty(${item.product_id}, -${step})">-</button>
+                            <input type="number" class="qty-input" value="${item.quantity}" step="${step}" min="0.1" onchange="updateDraftItemQty(${item.product_id}, this.value)">
+                            <button class="qty-btn" onclick="changeDraftItemQty(${item.product_id}, ${step})">+</button>
+                        </div>
+                        <div style="font-size:12px;color:var(--text-secondary)">₹${item.unit_price.toFixed(0)}</div>
                         <div style="text-align:right;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;color:var(--green)">₹${item.line_total.toFixed(2)}</div>
+                        <div>
+                            <button class="btn-remove-item" onclick="removeDraftItem(${item.product_id})" title="Remove item">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
                     </div>
                 `;
             });
@@ -3182,6 +3485,155 @@
             document.getElementById('btn-confirm-paid').disabled = false;
             document.getElementById('btn-confirm-udhaar').disabled = false;
         }
+
+        /* ═══ DRAFT BILL EDITING & SYNC HELPERS ═════════════════ */
+        async function updateDraftItemQty(productId, newQty) {
+            newQty = parseFloat(newQty);
+            if (isNaN(newQty) || newQty <= 0) {
+                removeDraftItem(productId);
+                return;
+            }
+            if (!currentDraftBill || !currentDraftBill.line_items) return;
+
+            const updatedItems = currentDraftBill.line_items.map(item => {
+                if (item.product_id === productId) {
+                    return { product_id: item.product_id, quantity: newQty };
+                }
+                return { product_id: item.product_id, quantity: item.quantity };
+            });
+
+            await _syncUpdatedDraftBill(updatedItems);
+        }
+
+        async function changeDraftItemQty(productId, delta) {
+            if (!currentDraftBill || !currentDraftBill.line_items) return;
+            const existing = currentDraftBill.line_items.find(i => i.product_id === productId);
+            if (!existing) return;
+
+            let currentQty = parseFloat(existing.quantity) || 0;
+            let newQty = currentQty + delta;
+            if (newQty <= 0) {
+                removeDraftItem(productId);
+            } else {
+                updateDraftItemQty(productId, newQty.toFixed(2));
+            }
+        }
+
+        async function removeDraftItem(productId) {
+            if (!currentDraftBill || !currentDraftBill.line_items) return;
+
+            const updatedItems = currentDraftBill.line_items
+                .filter(item => item.product_id !== productId)
+                .map(item => ({ product_id: item.product_id, quantity: item.quantity }));
+
+            if (updatedItems.length === 0) {
+                clearCurrentDraft();
+                showToast("Draft bill cleared", "info");
+                return;
+            }
+
+            await _syncUpdatedDraftBill(updatedItems);
+        }
+
+        function clearCurrentDraft() {
+            currentDraftBill = null;
+            const badge = document.getElementById('draft-id-badge');
+            if (badge) badge.innerText = 'No Draft';
+            const totalDisplay = document.getElementById('cart-total-display');
+            if (totalDisplay) totalDisplay.innerText = '₹0.00';
+            const emptyState = document.getElementById('bill-empty-state');
+            if (emptyState) emptyState.classList.remove('d-none');
+            const itemsList = document.getElementById('bill-items-list');
+            if (itemsList) itemsList.classList.add('d-none');
+            const tbody = document.getElementById('cart-items-body');
+            if (tbody) tbody.innerHTML = '';
+            const btnPaid = document.getElementById('btn-confirm-paid');
+            if (btnPaid) btnPaid.disabled = true;
+            const btnUdhaar = document.getElementById('btn-confirm-udhaar');
+            if (btnUdhaar) btnUdhaar.disabled = true;
+        }
+
+        async function _syncUpdatedDraftBill(items) {
+            const custId = document.getElementById('bill-customer-select').value;
+            try {
+                const res = await fetch('/api/v1/billing/create', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ items: items, customer_id: custId ? parseInt(custId) : null })
+                });
+                const data = await res.json();
+                if (res.ok && data.draft_bill_id) {
+                    renderDraftBill(data);
+                } else {
+                    showToast(data.error?.message || 'Failed to update draft bill', 'error');
+                }
+            } catch (e) {
+                console.error("Sync draft error:", e);
+                showToast("Connection error while updating bill", "error");
+            }
+        }
+
+        async function onBillSearchInput(val) {
+            const dropdown = document.getElementById('bill-search-dropdown');
+            if (!val || val.trim().length === 0) {
+                dropdown.classList.add('d-none');
+                return;
+            }
+            const q = val.trim().toLowerCase();
+            try {
+                const res = await fetch(`/api/v1/products/search?q=${encodeURIComponent(q)}`);
+                if (!res.ok) return;
+                const products = await res.json();
+                if (products.length === 0) {
+                    dropdown.innerHTML = '<div class="p-2 text-center text-muted" style="font-size:12px">No products found</div>';
+                    dropdown.classList.remove('d-none');
+                    return;
+                }
+                let html = '';
+                products.slice(0, 6).forEach(p => {
+                    html += `
+                        <div class="search-result-item" onclick="addQuickProductToDraft(${p.product_id})">
+                            <div>
+                                <div style="font-weight:600;font-size:13px">${escapeHtml(p.name)}</div>
+                                <div style="font-size:11px;color:var(--text-muted)">Stock: ${p.quantity_on_hand} ${p.unit}</div>
+                            </div>
+                            <div style="font-weight:700;color:var(--green);font-size:13px">+ ₹${p.price}</div>
+                        </div>
+                    `;
+                });
+                dropdown.innerHTML = html;
+                dropdown.classList.remove('d-none');
+            } catch(e) { console.error(e); }
+        }
+
+        async function addQuickProductToDraft(productId) {
+            const dropdown = document.getElementById('bill-search-dropdown');
+            if (dropdown) dropdown.classList.add('d-none');
+            const input = document.getElementById('bill-quick-search');
+            if (input) input.value = '';
+
+            let currentItems = [];
+            if (currentDraftBill && currentDraftBill.line_items) {
+                currentItems = currentDraftBill.line_items.map(i => ({ product_id: i.product_id, quantity: i.quantity }));
+            }
+
+            const existingIndex = currentItems.findIndex(i => i.product_id === productId);
+            if (existingIndex >= 0) {
+                currentItems[existingIndex].quantity += 1;
+            } else {
+                currentItems.push({ product_id: productId, quantity: 1 });
+            }
+
+            await _syncUpdatedDraftBill(currentItems);
+        }
+
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('bill-search-dropdown');
+            const searchInput = document.getElementById('bill-quick-search');
+            if (dropdown && !dropdown.contains(e.target) && e.target !== searchInput) {
+                dropdown.classList.add('d-none');
+            }
+        });
 
         /* CHECKPOINT 3: Pre-Checkout Read-Back & Confirmation */
         function showReadbackConfirmationModal(paymentStatus) {
@@ -3212,21 +3664,55 @@
 
             // Open Bootstrap Modal
             const modalEl = document.getElementById('modalReadbackConfirm');
-            const modal = new bootstrap.Modal(modalEl);
-            modal.show();
+            if (modalEl) {
+                const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                modal.show();
+            }
         }
 
         function proceedWithConfirmedCheckout() {
             isReadbackConfirmed = true;
             const modalEl = document.getElementById('modalReadbackConfirm');
-            const modal = bootstrap.Modal.getInstance(modalEl);
-            if (modal) modal.hide();
+            if (modalEl) {
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) modal.hide();
+            }
 
             executeBillCheckout(pendingCheckoutPaymentStatus);
         }
 
+        function getSafeUUID() {
+            if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+                try { return window.crypto.randomUUID(); } catch(e) {}
+            }
+            return 'uuid-' + Date.now() + '-' + Math.random().toString(36).substring(2, 11) + '-' + Math.random().toString(36).substring(2, 11);
+        }
+
+        function openDigitalReceiptModal(txnId) {
+            const iframe = document.getElementById('receipt-iframe');
+            if (iframe) {
+                iframe.src = `/api/v1/receipts/${txnId}/view`;
+            }
+            const modalEl = document.getElementById('modalReceiptViewer');
+            if (modalEl) {
+                const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                modal.show();
+            }
+        }
+
+        function printReceiptIframe() {
+            const iframe = document.getElementById('receipt-iframe');
+            if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+            }
+        }
+
         async function confirmCurrentBill(paymentStatus) {
-            if (!currentDraftBill) return;
+            if (!currentDraftBill || !currentDraftBill.line_items || currentDraftBill.line_items.length === 0) {
+                showToast("Please add items to bill first!", 'error');
+                return;
+            }
 
             if (currentDraftBill.warnings && currentDraftBill.warnings.length > 0) {
                 if (!confirm("Warning: Some items in this bill have insufficient stock. Do you still want to confirm this bill?")) {
@@ -3252,7 +3738,10 @@
         }
 
         async function executeBillCheckout(paymentStatus) {
-            if (!currentDraftBill) return;
+            if (!currentDraftBill || !currentDraftBill.line_items || currentDraftBill.line_items.length === 0) {
+                showToast("Please add items to bill first!", 'error');
+                return;
+            }
             const custId = document.getElementById('bill-customer-select').value;
 
             try {
@@ -3263,17 +3752,16 @@
                         draft_bill_id: currentDraftBill.draft_bill_id,
                         payment_status: paymentStatus,
                         customer_id: custId ? parseInt(custId) : null,
-                        idempotency_key: crypto.randomUUID()
+                        idempotency_key: getSafeUUID()
                     })
                 });
 
                 const data = await res.json();
                 if (res.ok) {
-                    showToast(`✓ Invoice ${data.invoice_number} confirmed successfully!`, 'success');
+                    showToast(`✓ Invoice ${data.invoice_number} created successfully!`, 'success');
 
-                    // Open digital receipt in new tab
-                    const receiptUrl = `/api/v1/receipts/${data.txn_id}/view`;
-                    window.open(receiptUrl, '_blank');
+                    // Open digital receipt in modal directly on screen
+                    openDigitalReceiptModal(data.txn_id);
 
                     currentDraftBill = null;
                     isReadbackConfirmed = false;
@@ -3292,7 +3780,8 @@
                     showToast(data.error ? data.error.message : "Confirmation failed", 'error');
                 }
             } catch (e) {
-                console.error(e);
+                console.error("Execute bill checkout error:", e);
+                showToast("Connection error during bill confirmation", 'error');
             }
         }
 
@@ -3552,7 +4041,7 @@
                 body: JSON.stringify({
                     customer_id: custId,
                     amount: amount,
-                    idempotency_key: crypto.randomUUID()
+                    idempotency_key: getSafeUUID()
                 })
             });
 

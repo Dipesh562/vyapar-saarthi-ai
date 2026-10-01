@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from app.extensions import db
 
 class InventoryMovement(db.Model):
@@ -12,7 +12,7 @@ class InventoryMovement(db.Model):
     previous_stock = db.Column(db.Numeric(10, 3), nullable=False)
     new_stock = db.Column(db.Numeric(10, 3), nullable=False)
     reason = db.Column(db.String(255), nullable=True)
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
 
     product = db.relationship('Product', foreign_keys=[product_id])
     store = db.relationship('Store', foreign_keys=[store_id])

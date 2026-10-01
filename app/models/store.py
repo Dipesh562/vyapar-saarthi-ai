@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from app.extensions import db
 
 class Store(db.Model):
@@ -12,8 +12,8 @@ class Store(db.Model):
     gstin = db.Column(db.String(20), nullable=True)          # GST Identification Number
     language_pref = db.Column(db.String(20), nullable=False, default='hi-en')
     is_active = db.Column(db.Boolean, nullable=False, default=True)  # Soft-delete flag
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     # Relationships
     users = db.relationship('User', backref='store', foreign_keys='User.store_id', lazy=True)

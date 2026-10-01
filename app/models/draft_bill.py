@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from app.extensions import db
 
 class DraftBill(db.Model):
@@ -11,7 +11,7 @@ class DraftBill(db.Model):
     subtotal = db.Column(db.Numeric(10, 2), nullable=False)
     total = db.Column(db.Numeric(10, 2), nullable=False)
     warnings_json = db.Column(db.Text, nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     def to_dict(self):
         import json
@@ -32,4 +32,4 @@ class BillingIdempotency(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     cache_key = db.Column(db.String(128), unique=True, index=True, nullable=False)
     response_json = db.Column(db.Text, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))

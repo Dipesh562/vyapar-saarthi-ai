@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from app.extensions import db
 
 class ProductSynonym(db.Model):
@@ -11,7 +11,7 @@ class ProductSynonym(db.Model):
     maps_to_product_id = db.Column(db.BigInteger().with_variant(db.Integer, "sqlite"), db.ForeignKey('products.product_id'), nullable=True)
     language = db.Column(db.String(10), nullable=True)
     evidence_count = db.Column(db.Integer, default=1, nullable=False)
-    last_confirmed_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=True)
+    last_confirmed_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=True)
     is_auto_learned = db.Column(db.Boolean, default=False, nullable=False)
 
     product = db.relationship('Product', foreign_keys=[maps_to_product_id])

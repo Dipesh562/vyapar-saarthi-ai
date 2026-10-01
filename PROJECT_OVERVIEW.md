@@ -27,7 +27,8 @@ Merchants can create bills, check stock, and manage customer credit using spoken
 
 ### 🎙️ 1. Voice-First Billing Engine
 - **Multi-Modal Input**: Audio uploads (WAV, WebM) via `/api/v1/voice/transcribe` or pre-transcribed text via `/api/v1/voice/process_bill`.
-- **AI Intent Classification**: Parses intents: `create_bill`, `add_item`, `remove_item`, `check_stock`, `business_query`.
+- **AI Intent Classification**: Parses intents: `create_bill`, `check_stock`, `business_query`. (The AI system prompt defines these four; `remove_item` may be extracted by the LLM but the current `/api/v1/voice/process_bill` handler only acts on `create_bill` — query intents route to the Assistant.)
+
 - **Entity Extraction**: Extracts product names, `quantity`, and measurement units per spoken item.
 - **Referential Resolution**: Handles follow-up phrases like *"aur do"* or *"add 2 more"* by resolving to the last matched product via `MerchantCartSession`.
 - **Merchant Feedback Learning**: When a merchant clarifies an ambiguous item via `/api/v1/voice/feedback`, the system records a `ProductSynonym` and increments its `evidence_count` for future auto-matching.
@@ -55,10 +56,15 @@ Merchants can create bills, check stock, and manage customer credit using spoken
 - **Payment Modes**: `'paid'` (cash/UPI/direct) or `'udhaar'` (credit — requires `customer_id`).
 - **Transaction Adjustments**: `TransactionAdjustment` records voids, item corrections, and refunds against confirmed transactions.
 
-### 🛡️ 5. Resilient Infrastructure & Production Operations
-- **Self-Healing Database Boot**: Automatically falls back from PostgreSQL to local SQLite if connection fails.
+### 🏬 5. Multi-Store Architecture & Isolation
+- **Multi-Store Ownership**: Shop owners can create, manage, switch, and delete multiple store outlets (`OwnerStore` model).
+- **Session & Header Store Context**: Active store context is selected via `session['active_store_id']` or `X-Store-ID` header.
+- **Store Data Isolation**: All products, inventory, customers, transactions, and sales analytics are strictly filtered by active `store_id`.
+
+### 🛡️ 6. Resilient Infrastructure & Production Operations
+- **Self-Healing Database Boot**: Automatically falls back from PostgreSQL to local SQLite if connection fails and auto-syncs SQLite columns.
 - **Automatic Seed Gate**: Seeds FMCG demo inventory on boot if `Product` table is empty and `SEED_DEMO=true`.
-- **User Roles**: `'owner'` (full access) and `'helper'` (no manual stock adjustments or helper management). Enforced via `@require_role('owner')` decorator.
+- **Role & Access Control**: `'owner'` role enforced via `@require_role('owner')` decorator.
 - **PWA Support**: Serves `/manifest.json` and `/sw.js` for Progressive Web App installation on mobile.
 - **Error Monitoring**: Optional Sentry SDK integration (skipped if `SENTRY_DSN` starts with `'mock'`).
 
@@ -76,9 +82,10 @@ Merchants can create bills, check stock, and manage customer credit using spoken
 | Migration Engine  | Flask-Migrate / Alembic                            |
 | Auth & Security   | Flask-Login, werkzeug.security (Scrypt Hashing)    |
 | Role Control      | Custom @require_role('owner') decorator            |
-| NLP & Matching    | RapidFuzz, Custom Phonetic Normalizer, Cloud LLMs  |
+| Multi-Tenancy     | Per-Store Data Isolation & OwnerStore Junction     |
+| NLP & Matching    | RapidFuzz, Custom Phonetic Normalizer, Google Gemini API (NLP + STT), Anthropic Claude (NLP fallback) — *Note: Cloud LLMs are optional; local Kirana regex fallback engine is active by default when API keys are omitted* |
 | Monitoring        | Sentry SDK (Optional, Flask Integration)           |
-| Test Framework    | Pytest (30+ Unit & Integration Tests)              |
+| Test Framework    | Pytest (32 Unit & Integration Tests)              |
 | PWA               | Service Worker (/sw.js) + Web App Manifest         |
 +-----------------------------------------------------------------------+
 ```
@@ -91,8 +98,9 @@ Merchants can create bills, check stock, and manage customer credit using spoken
 d:/projectss/Vypaar sarthi/
 ├── app/                            # Main Application Package
 │   ├── models/                     # SQLAlchemy Data Models
-│   │   ├── user.py                 # User (owner / helper, phone-based login)
-│   │   ├── store.py                # Store (owner_user_id backref, language_pref)
+│   │   ├── user.py                 # User (owner role, phone-based login, accessible_store_ids)
+│   │   ├── store.py                # Store (name, phone, gstin, is_active)
+│   │   ├── owner_store.py          # OwnerStore (owner_id to store_id junction table)
 │   │   ├── product.py              # Product (normalized_name, price, is_active)
 │   │   ├── product_synonym.py      # ProductSynonym (term, maps_to_product_id, evidence_count)
 │   │   ├── inventory.py            # Inventory (quantity_on_hand, low_stock_threshold)
@@ -103,9 +111,10 @@ d:/projectss/Vypaar sarthi/
 │   │   ├── transaction.py          # Transaction, TransactionItem, TransactionAdjustment
 │   │   ├── draft_bill.py           # DraftBill, BillingIdempotency
 │   │   └── voice_session.py        # VoiceSession (transcript, resolved_intent, needed_clarification)
-│   ├── routes/                     # Flask Blueprint Route Handlers (15 Blueprints)
+│   ├── routes/                     # Flask Blueprint Route Handlers (16 Blueprints)
 │   │   ├── main.py                 # main_bp — HTML index, /manifest.json, /sw.js
-│   │   ├── auth.py                 # auth_bp — /register_owner, /register_helper, /login, /logout, /me
+│   │   ├── auth.py                 # auth_bp — /register_owner, /login, /logout, /me
+│   │   ├── stores.py               # stores_bp — store CRUD, active session switch, delete
 │   │   ├── voice.py                # voice_bp — /transcribe, /process_bill, /feedback
 │   │   ├── billing.py              # billing_bp — /create, /confirm, DELETE /<id>
 │   │   ├── products.py             # products_bp — CRUD + search
@@ -125,7 +134,7 @@ d:/projectss/Vypaar sarthi/
 │   │   ├── billing_engine.py       # Draft bill creation, confirm, void
 │   │   ├── khata_engine.py         # Udhaar/Jama ledger & balance computation
 │   │   ├── inventory_engine.py     # Manual stock adjustment logic
-│   │   ├── query_router.py         # Local SQL vs Cloud LLM routing
+│   │   ├── query_router.py         # BusinessAssistantQueryRouter — local SQL templates only (sales, stock, udhaar)
 │   │   ├── stt_client.py           # Speech-to-Text audio transcription
 │   │   ├── voice_feedback.py       # Hinglish spoken confirmation generator
 │   │   └── cart_session.py         # In-memory per-store cart session state

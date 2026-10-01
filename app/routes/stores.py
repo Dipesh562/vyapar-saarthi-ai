@@ -48,7 +48,7 @@ def list_stores():
     memberships = OwnerStore.query.filter_by(owner_id=current_user.user_id).all()
     result = []
     for m in memberships:
-        store = Store.query.get(m.store_id)
+        store = db.session.get(Store, m.store_id)
         if store and store.is_active:
             result.append(_store_dict(store, is_primary=m.is_primary, active_store_id=active_id))
 
@@ -139,7 +139,7 @@ def get_store(store_id):
             }
         }), 404
 
-    store = Store.query.get(store_id)
+    store = db.session.get(Store, store_id)
     active_id = get_active_store_id()
     return jsonify({
         "store": _store_dict(store, is_primary=membership.is_primary, active_store_id=active_id)
@@ -166,7 +166,7 @@ def update_store(store_id):
             }
         }), 404
 
-    store = Store.query.get(store_id)
+    store = db.session.get(Store, store_id)
     if not store:
         return jsonify({"error": {"code": "STORE_NOT_FOUND", "message": "Store not found."}}), 404
 
@@ -206,7 +206,7 @@ def switch_to_store(store_id):
             }
         }), 403
 
-    store = Store.query.get(store_id)
+    store = db.session.get(Store, store_id)
     if not store or not store.is_active:
         return jsonify({
             "error": {
@@ -254,7 +254,7 @@ def delete_store(store_id):
         }), 400
 
     all_memberships = OwnerStore.query.filter_by(owner_id=current_user.user_id).all()
-    active_stores_count = sum(1 for m in all_memberships if (s := Store.query.get(m.store_id)) and s.is_active)
+    active_stores_count = sum(1 for m in all_memberships if (s := db.session.get(Store, m.store_id)) and s.is_active)
     if active_stores_count <= 1:
         return jsonify({
             "error": {
@@ -263,7 +263,7 @@ def delete_store(store_id):
             }
         }), 400
 
-    store = Store.query.get(store_id)
+    store = db.session.get(Store, store_id)
     store.is_active = False
 
     # If this was the active store, switch back to home store

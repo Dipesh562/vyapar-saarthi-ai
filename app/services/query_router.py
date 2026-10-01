@@ -1,5 +1,5 @@
 from decimal import Decimal
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import func
 from app.extensions import db
 from app.models import Transaction, Product, Inventory, KhataEntry, Customer
@@ -13,7 +13,7 @@ class BusinessAssistantQueryRouter:
         LLM phrasing guardrail: Numerical values are computed ONLY by SQL, never halluncinated.
         """
         q = question.lower()
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         # Query 1: Today's Total Sales
         if any(term in q for term in ["aaj ka sale", "today sales", "total sale", "today revenue", "aaj ki kamai"]):

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from app.extensions import db
 
 
@@ -27,7 +27,7 @@ class OwnerStore(db.Model):
     )
     # True for the store the owner first registered with (their home/primary store)
     is_primary = db.Column(db.Boolean, nullable=False, default=False)
-    added_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    added_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
 
     __table_args__ = (
         db.UniqueConstraint('owner_id', 'store_id', name='uq_owner_stores'),

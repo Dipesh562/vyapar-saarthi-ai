@@ -1,6 +1,6 @@
 import re
 import unicodedata
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Dict, Any
 from rapidfuzz import fuzz
 from app.models import Product, ProductSynonym
@@ -183,14 +183,14 @@ class ProductMatchingEngine:
 
         if synonym:
             synonym.evidence_count = (synonym.evidence_count or 1) + 1
-            synonym.last_confirmed_at = datetime.utcnow()
+            synonym.last_confirmed_at = datetime.now(timezone.utc)
         else:
             synonym = ProductSynonym(
                 store_id=store_id,
                 term=term,
                 maps_to_product_id=product_id,
                 evidence_count=1,
-                last_confirmed_at=datetime.utcnow(),
+                last_confirmed_at=datetime.now(timezone.utc),
                 is_auto_learned=True
             )
             db.session.add(synonym)

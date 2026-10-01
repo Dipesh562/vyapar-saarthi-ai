@@ -57,7 +57,7 @@ app_obj = Flask(__name__)
 auth_bp    = Blueprint('auth', __name__, url_prefix='/api/v1/auth')
 voice_bp   = Blueprint('voice', __name__, url_prefix='/api/v1/voice')
 billing_bp = Blueprint('billing', __name__, url_prefix='/api/v1/billing')
-# ... 15 blueprints total
+# ... 16 blueprints total
 ```
 
 Every blueprint is registered with the main app:
@@ -302,7 +302,10 @@ Two cloud Large Language Model (LLM) APIs that parse spoken merchant transcripts
 Redundancy and cost optimization. The system tries providers in order:
 1. **Google Gemini** (tried first — faster, cheaper)
 2. **Anthropic Claude** (fallback if Gemini fails or key is missing)
-3. **Regex Fallback Parser** (local, zero-cost fallback if both AI providers fail)
+3. **Regex Fallback Parser** (local, zero-cost fallback if both AI providers fail or if API keys are missing)
+
+> [!NOTE]
+> **Zero API Keys Mode**: Neither `GEMINI_API_KEY` nor `ANTHROPIC_API_KEY` is required. If left blank in `.env`, the system automatically skips both cloud LLMs and operates **100% locally on the Kirana Regex Fallback Engine** with zero errors. Cloud LLMs are optional architectural upgrades.
 
 ### What these LLMs actually do
 Given a spoken transcript like:
@@ -380,7 +383,7 @@ response = client.models.generate_content(model="gemini-2.0-flash", contents=[au
 
 **Confidence threshold**: If confidence < 0.60, the transcript is rejected and a retry prompt is returned.
 
-**Graceful degradation**: If `GEMINI_API_KEY` is not set (or starts with `'mock'`), the STT client returns `{"error": "STT_UNAVAILABLE"}` — development and testing still works using the `transcript_text` form field bypass.
+**Graceful degradation**: If `GEMINI_API_KEY` is not set (or starts with `'mock'`), the STT client returns `{"error": "STT_UNAVAILABLE"}`. In browser environments (Chrome/Edge), voice billing continues to work seamlessly via the **Browser Web Speech API**, which transcribes speech locally in the browser with no server API keys required. Development and testing also work using the `transcript_text` form field bypass.
 
 ---
 

@@ -212,7 +212,7 @@ def switch_store():
             }
         }), 403
 
-    store = Store.query.get(target_store_id)
+    store = db.session.get(Store, target_store_id)
     if not store or not store.is_active:
         return jsonify({
             "error": {
@@ -245,7 +245,7 @@ def my_stores():
     memberships = OwnerStore.query.filter_by(owner_id=current_user.user_id).all()
     stores = []
     for m in memberships:
-        store = Store.query.get(m.store_id)
+        store = db.session.get(Store, m.store_id)
         if store:
             d = _store_dict(store)
             d['is_primary'] = m.is_primary
@@ -334,14 +334,14 @@ def logout():
 def get_me():
     from app.utils.decorators import get_active_store_id
     active_store_id = get_active_store_id()
-    active_store = Store.query.get(active_store_id)
+    active_store = db.session.get(Store, active_store_id)
 
     # Build owned stores list for owners
     owned_stores = []
     if current_user.role == 'owner':
         memberships = OwnerStore.query.filter_by(owner_id=current_user.user_id).all()
         for m in memberships:
-            s = Store.query.get(m.store_id)
+            s = db.session.get(Store, m.store_id)
             if s:
                 owned_stores.append({
                     "store_id": s.store_id,

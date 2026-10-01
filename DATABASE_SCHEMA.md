@@ -86,14 +86,33 @@ Merchant user accounts. Authentication is phone-based (not email/username).
 | `store_id` | BigInteger (Integer in SQLite) | **PK**, AutoIncrement | — | |
 | `name` | String(150) | Not Null | — | Business name |
 | `owner_user_id` | BigInteger | **FK** → `users.user_id` (deferred, `use_alter=True`), Nullable | — | Set after owner creation |
+| `phone` | String(20) | Nullable | — | Contact number for store |
+| `gstin` | String(20) | Nullable | — | GSTIN registration number |
 | `address` | String(255) | Nullable | — | |
 | `language_pref` | String(20) | Not Null | `'hi-en'` | Voice language preference |
+| `is_active` | Boolean | Not Null | `True` | Soft-delete status |
 | `created_at` | DateTime | Not Null | UTC Now | |
 | `updated_at` | DateTime | Not Null | UTC Now | |
 
-**Relationships**: Has `users`, `products`, `customers`, `transactions`, `voice_sessions`.
+**Relationships**: Has `users`, `products`, `customers`, `transactions`, `voice_sessions`, `owner_stores`.
 
 > **Note**: `owner_user_id` uses `use_alter=True` to avoid circular FK dependency during table creation (Store references User, User references Store).
+
+---
+
+### 2b. `owner_stores` ([app/models/owner_store.py](file:///d:/projectss/Vypaar%20sarthi/app/models/owner_store.py))
+Junction table mapping one store owner (`User`) to multiple managed `Store` entities.
+
+| Column | Type | Constraints | Default | Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| `id` | BigInteger (Integer in SQLite) | **PK**, AutoIncrement | — | |
+| `owner_id` | BigInteger | **FK** → `users.user_id` (Cascade), Not Null | — | |
+| `store_id` | BigInteger | **FK** → `stores.store_id` (Cascade), Not Null | — | |
+| `is_primary` | Boolean | Not Null | `False` | True if home/primary store |
+| `added_at` | DateTime | Not Null | UTC Now | |
+
+**Unique Constraint**: `(owner_id, store_id)`  
+**Index**: `(owner_id)`
 
 ---
 

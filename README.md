@@ -13,12 +13,13 @@ Vyapar Saarthi AI is a lightweight, voice-enabled Point-of-Sale (POS), inventory
 
 ## 🌟 Key Features
 
-* 🎙️ **Voice-First Billing & Search**: Process items using natural voice commands in Hindi and English with intelligent fuzzy matching.
+* 🎙️ **Voice-First Billing & Search**: Process items using natural voice commands in Hindi, Marathi, and Hinglish with intelligent fuzzy matching.
 * 📦 **Real-Time Inventory Engine**: Automated stock deduction on bill completion, stock movement audit logging, and low-stock alerts.
+* 🏬 **Multi-Store Management**: Register, switch, and delete multiple store outlets with isolated inventories, products, and customer ledgers per store.
 * 📕 **Khata Ledger**: Manage customer credit/debit balances with transaction history and settlement tracking.
 * 🤖 **Smart Assistant & Alerts**: Proactive AI insights for low stock, unpaid khata balances, and daily sales summaries.
-* 🔒 **Role-Based Access**: Multi-role security (Admin & Cashier) with session authentication.
-* 🧪 **Comprehensive Test Suite**: 29 automated test cases covering authentication, billing, voice pipeline, and database migrations.
+* 🔒 **Role-Based Security**: Owner account authentication, session cookie encryption, and multi-tenant store isolation.
+* 🧪 **Comprehensive Test Suite**: 32 automated test cases covering authentication, billing, voice pipeline, multi-store, and database migrations.
 
 ---
 
@@ -35,6 +36,7 @@ For in-depth technical details, architecture, and specifications, explore our co
 | 🎙️ **[AI_AND_VOICE_ENGINE.md](file:///d:/projectss/Vypaar%20sarthi/AI_AND_VOICE_ENGINE.md)** | Voice processing, STT integration, and phonetic matching specs |
 | 💻 **[DEVELOPER_GUIDE.md](file:///d:/projectss/Vypaar%20sarthi/DEVELOPER_GUIDE.md)** | Local setup, testing instructions, seed loading, and deployment |
 | 🛠️ **[TECH_STACK.md](file:///d:/projectss/Vypaar%20sarthi/TECH_STACK.md)** | Detailed breakdown of every technology, package, and library used |
+| 🚀 **[DEPLOYMENT_GUIDE.md](file:///d:/projectss/Vypaar%20sarthi/DEPLOYMENT_GUIDE.md)** | Step-by-step production cloud deployment guide (Render.com + Supabase) |
 
 ---
 
@@ -87,25 +89,27 @@ Open **[http://127.0.0.1:5000](http://127.0.0.1:5000)** in your web browser.
 
 ```
 vyapar-saarthi-ai/
-├── app/
-│   ├── models/        # SQLAlchemy ORM Data Models (Product, Transaction, Khata, etc.)
-│   ├── routes/        # Flask Blueprints (Billing, Inventory, Voice, Auth, Alerts, etc.)
-│   ├── services/      # Business Logic (Billing Engine, Voice Pipeline, STT Client, etc.)
-│   ├── templates/     # Frontend Web Interface
-│   └── utils/         # Helper Decorators & Utilities
-├── seed/              # Sample Inventory CSV & Load Scripts
-├── tests/             # Pytest Suite (29 unit & integration tests)
-├── config.py          # Application Configuration Settings
-├── requirements.txt   # Python Dependencies
-├── run.py             # Server Application Entry Point
-└── start.bat          # One-Click Launch Script (Windows)
+├── app/                            # Main Application Package
+│   ├── models/                     # SQLAlchemy ORM Models (Product, Store, OwnerStore, etc.)
+│   ├── routes/                     # Flask Blueprints (Billing, Inventory, Voice, Stores, Auth, etc.)
+│   ├── services/                   # Business Logic (Billing Engine, Voice Pipeline, STT Client, etc.)
+│   ├── templates/                  # Frontend Web Interface (index.html)
+│   └── utils/                      # Helper Decorators & Utilities
+├── seed/                           # Sample Inventory CSV & Load Scripts
+├── tests/                          # Pytest Suite (32 unit & integration tests)
+├── config.py                       # Application Configuration Settings
+├── DEPLOYMENT_GUIDE.md             # Production Cloud Deployment Guide
+├── Procfile                        # Gunicorn Production Server Process Spec
+├── requirements.txt                # Python Dependencies
+├── run.py                          # Server Application Entry Point
+└── start.bat                       # One-Click Launch Script (Windows)
 ```
 
 ---
 
 ## 🧪 Running Tests
 
-Execute all 29 automated test cases to verify system functionality:
+Execute all 32 automated test cases to verify system functionality:
 
 ```bash
 pytest

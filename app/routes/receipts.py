@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, render_template_string
 from flask_login import login_required, current_user
+from app.extensions import db
 from app.models import Transaction, TransactionItem, Store, Customer
 from app.utils.decorators import get_active_store_id
 
@@ -107,7 +108,7 @@ def generate_receipt():
             from twilio.rest import Client
             twilio_client = Client(Config.TWILIO_ACCOUNT_SID, Config.TWILIO_AUTH_TOKEN)
             
-            customer = Customer.query.get(txn.customer_id) if txn.customer_id else None
+            customer = db.session.get(Customer, txn.customer_id) if txn.customer_id else None
             cust_phone = customer.phone if customer else None
 
             if cust_phone:
@@ -148,8 +149,8 @@ def view_receipt(txn_id):
     if not txn:
         return "Receipt Not Found", 404
 
-    store = Store.query.get(txn.store_id)
-    customer = Customer.query.get(txn.customer_id) if txn.customer_id else None
+    store = db.session.get(Store, txn.store_id)
+    customer = db.session.get(Customer, txn.customer_id) if txn.customer_id else None
     items = TransactionItem.query.filter_by(txn_id=txn.txn_id).all()
 
     return render_template_string(

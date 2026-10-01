@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from app.extensions import db
 
 class Transaction(db.Model):
@@ -13,7 +13,7 @@ class Transaction(db.Model):
     created_by_user_id = db.Column(db.BigInteger().with_variant(db.Integer, "sqlite"), db.ForeignKey('users.user_id'), nullable=False)
     voided_at = db.Column(db.DateTime, nullable=True)
     void_reason = db.Column(db.String(255), nullable=True)
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
 
     # Relationships
     items = db.relationship('TransactionItem', backref='transaction', lazy=True, cascade="all, delete-orphan")
@@ -50,6 +50,6 @@ class TransactionAdjustment(db.Model):
     description = db.Column(db.String(255), nullable=False)
     amount_delta = db.Column(db.Numeric(10, 2), nullable=False)
     adjusted_by_user_id = db.Column(db.BigInteger().with_variant(db.Integer, "sqlite"), db.ForeignKey('users.user_id'), nullable=False)
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
 
     adjusted_by_user = db.relationship('User', foreign_keys=[adjusted_by_user_id])

@@ -253,4 +253,81 @@ Records a customer payment against outstanding Udhaar balance. Idempotent.
 ## 7. System Health
 
 ### `GET /health`
-- **Response** `200 OK`: `{"status": "ok", "service": "Vyapar Saarthi AI"}` (approximately)
+- **Response** `200 OK`: `{"status": "ok", "service": "Vyapar Saarthi AI"}`
+
+---
+
+## 8. Multi-Store Management (`/api/v1/stores`)
+
+### `GET /api/v1/stores`
+Returns all stores associated with the currently authenticated owner.
+- **Response** `200 OK`:
+  ```json
+  {
+    "stores": [
+      {
+        "store_id": 1,
+        "name": "Sharma Kirana Main",
+        "phone": "9876543210",
+        "address": "MG Road",
+        "is_primary": true,
+        "is_active": true
+      },
+      {
+        "store_id": 2,
+        "name": "Sharma Kirana Branch",
+        "phone": "9876543211",
+        "address": "Station Road",
+        "is_primary": false,
+        "is_active": true
+      }
+    ],
+    "active_store_id": 1
+  }
+  ```
+
+### `POST /api/v1/stores`
+Creates a new store linked to the authenticated owner.
+- **Request**:
+  ```json
+  {
+    "name": "Sharma Kirana Branch 2",
+    "phone": "9876543212",
+    "address": "Market Square",
+    "gstin": "07AAAAA0000A1Z5"
+  }
+  ```
+- **Response** `201 Created`:
+  ```json
+  {
+    "message": "Store created successfully",
+    "store": {
+      "store_id": 3,
+      "name": "Sharma Kirana Branch 2"
+    }
+  }
+  ```
+
+### `POST /api/v1/stores/<store_id>/switch` (or `/api/v1/stores/switch/<store_id>`)
+Switches the active store context in the merchant's session.
+- **Response** `200 OK`:
+  ```json
+  {
+    "message": "Switched to store Sharma Kirana Branch 2",
+    "active_store_id": 3,
+    "store": {
+      "store_id": 3,
+      "name": "Sharma Kirana Branch 2"
+    }
+  }
+  ```
+
+### `DELETE /api/v1/stores/<store_id>`
+Soft-deletes a store (`is_active = False`). Disallowed for primary stores or if it's the owner's last active store. Automatically switches session context back to primary store if deleting current active store.
+- **Response** `200 OK`:
+  ```json
+  {
+    "message": "Store deleted successfully",
+    "active_store_id": 1
+  }
+  ```

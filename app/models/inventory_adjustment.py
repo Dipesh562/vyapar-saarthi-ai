@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from app.extensions import db
 
 class InventoryAdjustment(db.Model):
@@ -10,7 +10,7 @@ class InventoryAdjustment(db.Model):
     quantity_delta = db.Column(db.Numeric(10, 3), nullable=False)
     reason = db.Column(db.String(255), nullable=False)
     adjusted_by_user_id = db.Column(db.BigInteger().with_variant(db.Integer, "sqlite"), db.ForeignKey('users.user_id'), nullable=False)
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
 
     product = db.relationship('Product', foreign_keys=[product_id])
     adjusted_by_user = db.relationship('User', foreign_keys=[adjusted_by_user_id])

@@ -1,7 +1,7 @@
 import json
 from decimal import Decimal
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from app.extensions import db
 from app.models import Product, Inventory, Transaction, TransactionItem, KhataEntry, InventoryMovement, DraftBill, BillingIdempotency
 from app.services.khata_engine import KhataEngine
@@ -61,7 +61,7 @@ class BillingEngine:
             subtotal=subtotal,
             total=subtotal,
             warnings_json=json.dumps(warnings),
-            created_at=datetime.utcnow()
+            created_at=datetime.now(timezone.utc)
         )
         db.session.add(draft_obj)
         db.session.commit()
@@ -122,7 +122,7 @@ class BillingEngine:
                     raise ValueError(f"INSUFFICIENT_STOCK:{product_id}:{item['name']}:{item['quantity']}:{available}")
 
             # Step 2: Generate daily invoice number (counting only today's invoices for this store)
-            now = datetime.utcnow()
+            now = datetime.now(timezone.utc)
             start_of_today = datetime(now.year, now.month, now.day, 0, 0, 0)
             today_str = now.strftime('%Y%m%d')
             count_today = Transaction.query.filter(
@@ -205,7 +205,7 @@ class BillingEngine:
             idempotency_obj = BillingIdempotency(
                 cache_key=cache_key,
                 response_json=json.dumps(response_payload),
-                created_at=datetime.utcnow()
+                created_at=datetime.now(timezone.utc)
             )
             db.session.add(idempotency_obj)
             db.session.commit()

@@ -20,14 +20,14 @@
 |   ├── werkzeug.security                     — Scrypt password hashing                |
 |   ├── HTTP-Only Lax session cookies         — XSS & CSRF protection                  |
 |   └── @require_role('owner')                — Role-based route access control        |
-|                                                                                       |
-|  Blueprint API Routing Layer (15 Blueprints):                                         |
+|                                                       |  Blueprint API Routing Layer (16 Blueprints):                                         |
 |  +-----------------------+---------------------------+------------------------------+ |
 |  | Blueprint             | URL Prefix                | Purpose                      | |
 |  +-----------------------+---------------------------+------------------------------+ |
 |  | main_bp               | / (root)                  | HTML index, /manifest.json,  | |
 |  |                       |                           | /sw.js (PWA service worker)  | |
 |  | auth_bp               | /api/v1/auth              | Register owner/helper, login | |
+|  | stores_bp             | /api/v1/stores            | Store creation, switch & del | |
 |  | voice_bp              | /api/v1/voice             | STT transcribe, voice bill,  | |
 |  |                       |                           | merchant feedback learning   | |
 |  | billing_bp            | /api/v1/billing           | Create/confirm/void drafts   | |
@@ -46,12 +46,12 @@
 |                                                                                       |
 |  Decoupled Domain Services Layer (app/services/):                                     |
 |   ├── STTClient                  — Audio-to-text transcription                       |
-|   ├── AIOrchestrationService     — NLP intent classification & entity extraction     |
+|   ├── AIOrchestrationService     — NLP intent classification & entity extraction (Gemini → Claude → Regex fallback; runs 100% locally when API keys are omitted) │
 |   ├── ProductMatchingEngine      — 4-tier fuzzy/phonetic product lookup              |
 |   ├── BillingEngine              — Draft bill lifecycle (create/confirm/void)        |
 |   ├── KhataEngine                — Udhaar/Jama balance computation                  |
 |   ├── InventoryEngine            — Manual stock adjustment with audit log            |
-|   ├── QueryRouter                — Local SQL vs Cloud LLM query dispatcher           |
+|   ├── QueryRouter                — Local SQL business query templates (sales, stock, udhaar)           |
 |   ├── VoiceFeedbackService       — Hinglish spoken confirmation generator            |
 |   └── MerchantCartSession        — In-memory per-store cart state                    |
 +---------------------------------------------------------------------------------------+
@@ -64,7 +64,6 @@
 |   Primary: PostgreSQL (Production / Cloud)                                            |
 |   Fallback: SQLite (instance/vyapar_saarthi_dev.db — auto-activated on DB failure)    |
 +---------------------------------------------------------------------------------------+
-```
 
 ---
 
@@ -75,7 +74,7 @@ Defined in [app/__init__.py](file:///d:/projectss/Vypaar%20sarthi/app/__init__.p
 1. **Accepts a config object or dict**: Supports plain `Config` class for production or inline `dict` overrides for test isolation (`TESTING=True`).
 2. **Initializes extensions**: `db.init_app()`, `login_manager.init_app()`, `migrate.init_app(app_obj, db)`.
 3. **Conditionally loads Sentry**: Only initializes `sentry_sdk` if `SENTRY_DSN` is set **and** does not start with `'mock'` (prevents accidental Sentry calls during testing).
-4. **Registers all 15 blueprints**.
+4. **Registers all 16 blueprints**.
 5. **Registers a global HTTP 500 error handler** that returns sanitized JSON, preventing stack traces leaking to clients.
 6. **Runs database boot sequence** inside `app_obj.app_context()`:
    - Imports all models to register them with SQLAlchemy.
@@ -93,7 +92,7 @@ All primary and foreign key columns use:
 ```python
 db.BigInteger().with_variant(db.Integer, "sqlite")
 ```
-This ensures **PostgreSQL receives `BIGINT`** (for scale) while **SQLite falls back to `INTEGER`** (which SQLite requires for `AUTOINCREMENT` primary keys). This is used consistently across all 12 models.
+This ensures **PostgreSQL receives `BIGINT`** (for scale) while **SQLite falls back to `INTEGER`** (which SQLite requires for `AUTOINCREMENT` primary keys). This is used consistently across all 16 models.
 
 ---
 

@@ -47,12 +47,15 @@ Copy `.env.example` to `.env` and fill in your values:
 | `SECRET_KEY` | String | `dev-secret-key-...` | Session cookie signing key — **change in production** |
 | `DATABASE_URL` | URI | `sqlite:///vyapar_saarthi_dev.db` | Primary DB connection. `postgres://` auto-converts to `postgresql://` |
 | `SEED_DEMO` | `true`/`false` | `true` | Auto-seeds FMCG demo inventory on first boot |
-| `ANTHROPIC_API_KEY` | String | — | Claude API key for LLM query routing |
-| `GEMINI_API_KEY` | String | — | Gemini API key for LLM query routing |
+| `ANTHROPIC_API_KEY` | String | — | Anthropic Claude API key for AI intent & entity extraction (NLP fallback after Gemini) |
+| `GEMINI_API_KEY` | String | — | Google Gemini API key for primary NLP intent parsing and Speech-to-Text audio transcription |
 | `TWILIO_ACCOUNT_SID` | String | — | Twilio SID (for SMS/WhatsApp receipts if enabled) |
 | `TWILIO_AUTH_TOKEN` | String | — | Twilio Auth Token |
 | `SENTRY_DSN` | URI | — | Sentry DSN for production error tracking (skipped if starts with `'mock'`) |
 | `VOICE_PIPELINE_MODE` | String | `ai_first` | Pipeline mode: `ai_first` or `legacy` |
+
+> [!NOTE]
+> **Running Without API Keys**: `GEMINI_API_KEY` and `ANTHROPIC_API_KEY` are **completely optional**. If left blank in `.env`, the system automatically defaults to the **Local Kirana Regex Fallback Parser** for NLP and the **Browser Web Speech API** for voice transcription. No cloud API calls are made.
 
 ---
 
@@ -81,7 +84,7 @@ Auto-seeding also runs at boot if `Product` table is empty and `SEED_DEMO=true`.
 
 ## 5. Test Suite Reference
 
-Vyapar Saarthi AI includes **30+ automated tests** using `pytest`.
+Vyapar Saarthi AI includes **32 automated tests** using `pytest`.
 
 ### Run all tests
 ```powershell
@@ -102,9 +105,9 @@ Vyapar Saarthi AI includes **30+ automated tests** using `pytest`.
 
 ```
 tests/
-├── test_auth.py              ← Registration (owner/helper), login, logout, /me endpoint
-├── test_billing.py           ← Draft creation, confirm (paid & udhaar), insufficient stock,
-│                                idempotency key duplicate prevention, void draft
+├── test_health.py            ← Health check endpoint verification
+├── test_auth.py              ← Registration (owner/helper), login, multi-store switching & deletion
+├── test_billing.py           ← Draft creation, confirm (paid & udhaar), stock checks & idempotency
 ├── test_products.py          ← Product CRUD, barcode & SKU lookup, catalog search
 ├── test_voice_ai.py          ← AI transcript NLP parsing, intent classification
 ├── test_voice_pipeline.py    ← End-to-end voice billing (transcribe → process_bill → draft)
@@ -127,11 +130,14 @@ app = create_app()
 ### 2. SQLAlchemy ORM — Never Raw SQL Strings
 Always use model queries:
 ```python
-# ✅ Correct
+# ✅ Correct (filter_by)
 product = Product.query.filter_by(store_id=store_id, sku="TATA-1KG").first()
 
-# ❌ Wrong — SQL injection risk
-db.engine.execute(f"SELECT * FROM products WHERE sku = '{sku}'")
+# ✅ Correct (session.get — PK lookup, SQLAlchemy 2.0 pattern)
+store = db.session.get(Store, store_id)
+
+# ❌ Wrong — deprecated as of SQLAlchemy 2.0
+store = Store.query.get(store_id)
 ```
 
 ### 3. Protect routes with decorators
@@ -160,3 +166,19 @@ Any endpoint that writes financial data (bill confirmations, payments) must:
 - Accept an `idempotency_key` in the request body.
 - Check against `BillingIdempotency.cache_key` or `IDEMPOTENCY_CACHE` before writing.
 - Return the cached response if the key already exists.
+
+### 7. Timezone-Aware Datetimes
+Always use timezone-aware UTC datetimes (Python 3.11+ requirement):
+```python
+# ✅ Correct
+from datetime import datetime, timezone
+now = datetime.now(timezone.utc)
+
+# ❌ Deprecated (Python 3.12+)
+now = datetime.utcnow()
+```
+
+In SQLAlchemy models, use `lambda:` to pass a callable:
+```python
+created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+```

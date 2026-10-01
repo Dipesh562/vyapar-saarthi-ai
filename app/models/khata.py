@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from app.extensions import db
 
 class KhataEntry(db.Model):
@@ -11,7 +11,7 @@ class KhataEntry(db.Model):
     amount = db.Column(db.Numeric(10, 2), nullable=False)
     type = db.Column(db.Enum('credit', 'payment', name='khata_entry_type'), nullable=False)
     recorded_by_user_id = db.Column(db.BigInteger().with_variant(db.Integer, "sqlite"), db.ForeignKey('users.user_id'), nullable=False)
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
 
     recorder = db.relationship('User', foreign_keys=[recorded_by_user_id])
     transaction = db.relationship('Transaction', foreign_keys=[txn_id])

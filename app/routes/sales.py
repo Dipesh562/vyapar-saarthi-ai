@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 from flask import Blueprint, request, jsonify
 from flask_login import current_user
@@ -17,7 +17,7 @@ def sales_summary():
     Aggregated sales metrics (Owner only). Helper is blocked per PRD Persona 2.
     """
     date_range = request.args.get('range', 'today')
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
 
     if date_range == 'today':
         start_date = datetime(now.year, now.month, now.day, 0, 0, 0)

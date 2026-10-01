@@ -44,7 +44,7 @@ def run_seed_in_context():
     print("--> Seeding Pilot Store (store_id = 1)...")
 
     # 2. Ensure Store (store_id = 1)
-    store = Store.query.get(1)
+    store = db.session.get(Store, 1)
     if not store:
         store = Store(store_id=1, name='Karvenagar Kirana Store', address='Karvenagar, Pune', language_pref='hi-en')
         db.session.add(store)
@@ -147,7 +147,7 @@ def run_seed_in_context():
     prod_count = Product.query.filter_by(store_id=1).count()
     inv_count = Inventory.query.count()
     syn_count = ProductSynonym.query.filter_by(store_id=1).count()
-    chilli_inv = Inventory.query.get(21)
+    chilli_inv = db.session.get(Inventory, 21)
 
     print(f"--> SEED LOAD COMPLETED SUCCESSFULLY!")
     print(f"    - Products Loaded: {prod_count} (Expect 22)")

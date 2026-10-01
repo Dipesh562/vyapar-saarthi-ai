@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 from app.extensions import db
 
@@ -13,7 +13,7 @@ class VoiceSession(db.Model):
     confidence_score = db.Column(db.Numeric(4, 3), nullable=True)
     needed_clarification = db.Column(db.Boolean, nullable=False, default=False)
     linked_txn_id = db.Column(db.BigInteger().with_variant(db.Integer, "sqlite"), db.ForeignKey('transactions.txn_id'), nullable=True)
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
 
     user = db.relationship('User', foreign_keys=[user_id])
     transaction = db.relationship('Transaction', foreign_keys=[linked_txn_id])

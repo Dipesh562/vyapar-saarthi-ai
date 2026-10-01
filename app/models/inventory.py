@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from app.extensions import db
 
 class Inventory(db.Model):
@@ -7,7 +7,7 @@ class Inventory(db.Model):
     product_id = db.Column(db.BigInteger().with_variant(db.Integer, "sqlite"), db.ForeignKey('products.product_id'), primary_key=True)
     quantity_on_hand = db.Column(db.Numeric(10, 3), nullable=False, default=0)
     low_stock_threshold = db.Column(db.Numeric(10, 3), nullable=False, default=0)
-    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     @property
     def is_low_stock(self) -> bool:
