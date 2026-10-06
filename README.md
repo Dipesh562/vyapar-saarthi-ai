@@ -17,9 +17,9 @@ Vyapar Saarthi AI is a lightweight, voice-enabled Point-of-Sale (POS), inventory
 * 📦 **Real-Time Inventory Engine**: Automated stock deduction on bill completion, stock movement audit logging, and low-stock alerts.
 * 🏬 **Multi-Store Management**: Register, switch, and delete multiple store outlets with isolated inventories, products, and customer ledgers per store.
 * 📕 **Khata Ledger**: Manage customer credit/debit balances with transaction history and settlement tracking.
-* 🤖 **Smart Assistant & Alerts**: Proactive AI insights for low stock, unpaid khata balances, and daily sales summaries.
+* 🤖 **Smart Assistant & Business Queries**: Ask sales, revenue, bill count, top products, low stock, and customer khata questions in natural language (Marathi, Hindi, English) with zero LLM hallucination — numbers are strictly computed by deterministic SQL queries.
 * 🔒 **Role-Based Security**: Owner account authentication, session cookie encryption, and multi-tenant store isolation.
-* 🧪 **Comprehensive Test Suite**: 32 automated test cases covering authentication, billing, voice pipeline, multi-store, and database migrations.
+* 🧪 **Comprehensive Test Suite**: 33 automated test cases covering authentication, billing, voice pipeline, multilingual sales queries, multi-store, and database migrations.
 
 ---
 
@@ -36,6 +36,7 @@ For in-depth technical details, architecture, and specifications, explore our co
 | 🎙️ **[AI_AND_VOICE_ENGINE.md](file:///d:/projectss/Vypaar%20sarthi/AI_AND_VOICE_ENGINE.md)** | Voice processing, STT integration, and phonetic matching specs |
 | 💻 **[DEVELOPER_GUIDE.md](file:///d:/projectss/Vypaar%20sarthi/DEVELOPER_GUIDE.md)** | Local setup, testing instructions, seed loading, and deployment |
 | 🛠️ **[TECH_STACK.md](file:///d:/projectss/Vypaar%20sarthi/TECH_STACK.md)** | Detailed breakdown of every technology, package, and library used |
+| 🎨 **[DESIGN.md](file:///d:/projectss/Vypaar%20sarthi/DESIGN.md)** | Frontend design system, typography, color tokens, and responsive layout |
 | 🚀 **[DEPLOYMENT_GUIDE.md](file:///d:/projectss/Vypaar%20sarthi/DEPLOYMENT_GUIDE.md)** | Step-by-step production cloud deployment guide (Render.com + Supabase) |
 
 ---
@@ -96,7 +97,7 @@ vyapar-saarthi-ai/
 │   ├── templates/                  # Frontend Web Interface (index.html)
 │   └── utils/                      # Helper Decorators & Utilities
 ├── seed/                           # Sample Inventory CSV & Load Scripts
-├── tests/                          # Pytest Suite (32 unit & integration tests)
+├── tests/                          # Pytest Suite (33 unit & integration tests)
 ├── config.py                       # Application Configuration Settings
 ├── DEPLOYMENT_GUIDE.md             # Production Cloud Deployment Guide
 ├── Procfile                        # Gunicorn Production Server Process Spec

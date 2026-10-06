@@ -33,7 +33,7 @@
 |  | billing_bp            | /api/v1/billing           | Create/confirm/void drafts   | |
 |  | products_bp           | /api/v1/products          | Catalog CRUD & search        | |
 |  | inventory_bp          | /api/v1/inventory         | Stock levels, adjust, history| |
-|  | inventory_csv_bp      | /api/v1/inventory/csv     | CSV bulk import & export     | |
+|  | inventory_csv_bp      | /api/v1/products/import   | CSV bulk catalog import      | |
 |  | customers_bp          | /api/v1/customers         | Customer profiles & Khata    | |
 |  | payments_bp           | /api/v1/payments          | Idempotent Udhaar payment    | |
 |  | receipts_bp           | /api/v1/receipts          | Invoice generation           | |
@@ -62,7 +62,7 @@
 +---------------------------------------------------------------------------------------+
 |                                PERSISTENCE LAYER                                      |
 |   Primary: PostgreSQL (Production / Cloud)                                            |
-|   Fallback: SQLite (instance/vyapar_saarthi_dev.db — auto-activated on DB failure)    |
+|   Fallback: SQLite (vyapar_saarthi_dev.db — auto-activated on DB failure)             |
 +---------------------------------------------------------------------------------------+
 
 ---
@@ -150,3 +150,37 @@ def adjust_inventory(product_id): ...
 The `main_bp` blueprint serves two additional routes:
 - **`GET /manifest.json`**: Returns a JSON PWA manifest (`name`, `short_name`, `start_url`, `display: standalone`, `theme_color: #0ea5e9`).
 - **`GET /sw.js`**: Returns a Network-First Service Worker JavaScript file that enables offline fallback via cache.
+
+---
+
+## 8. Business Query & Assistant Architecture
+
+The Business Assistant (`POST /api/v1/assistant/query`) follows a decoupled, grounded architecture:
+
+```
+User (Voice or Text)
+  │
+  ▼
+Frontend Assistant UI (index.html)
+  │ ── Sends { question, language }
+  ▼
+Assistant Blueprint (app/routes/assistant.py)
+  │
+  ▼
+BusinessAssistantQueryRouter (app/services/query_router.py)
+  ├── 1. Language Resolution (_resolve_language): Marathi, Hindi, English
+  ├── 2. Time Window Calculation (_get_time_window): Store IST date bounds → UTC range
+  ├── 3. Intent & Entity Extraction: metric, time_range, candidate product
+  ├── 4. Product Matching (ProductMatchingEngine.match_product): Resolves catalog items
+  ├── 5. Deterministic SQLAlchemy Aggregation (SUM, COUNT, AVG, TOP on Transaction/Item)
+  └── 6. Multilingual Template Generation: Strictly formatted with calculated figures
+  │
+  ▼
+Response JSON { answer_text, data_used }
+  │
+  ▼
+Frontend UI Bubble & TTS (speakText) in selected voice (mr-IN / hi-IN / en-IN)
+```
+
+**Guardrail Guarantee**: The assistant never calls an LLM to generate or guess numerical data. All figures are generated deterministically via SQLAlchemy.
+

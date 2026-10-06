@@ -281,12 +281,32 @@ This creates a **self-improving feedback loop** where the system becomes more ac
 
 **File**: [app/services/query_router.py](file:///d:/projectss/Vypaar%20sarthi/app/services/query_router.py)
 
-The `BusinessAssistantQueryRouter` answers business questions entirely via **local SQLAlchemy queries** — no external API calls are made. There are three hardcoded SQL templates:
+The `BusinessAssistantQueryRouter` answers sales and store operations questions entirely via **local SQLAlchemy queries** — no external LLM API calls are made for arithmetic or figures. This guarantees **zero numerical hallucinations**: all counts, totals, averages, and rankings are calculated deterministically by SQL.
 
-| Query Keyword Match | SQL Operation | Example Response |
-| :--- | :--- | :--- |
-| `"aaj ka sale"`, `"today sales"`, etc. | `SUM(Transaction.total)` filtered to today | *"Aaj aapke store par total ₹1,240 ki sale hui hai (8 transactions)."* |
-| `"low stock"`, `"kam stock"`, etc. | Filter products where `is_low_stock = True` | *"Aapke paas ye items low stock par hain: Green Chilli..."* |
-| `"udhaar"`, `"khata"`, `"balance"` | Sum all `KhataEntry` records per customer | *"Store ka kul outstanding Udhaar balance: Ramesh: ₹340."* |
+### Multilingual Support & Language Resolution
+The engine resolves responses strictly into the merchant's chosen language (**Marathi `mr`**, **Hindi `hi`**, or **English `en`**):
+1. **Explicit Request Parameter**: Passed from the UI language toggle (`mr-IN`, `hi-IN`, `en-IN`).
+2. **Natural Language Query Markers**: Marathi keywords (e.g. *kiti, zali, aahe, vikla, vikli, konta, saglyat, banle, aajchi, kalchi*) or English indicators.
+3. **Database Store Preference**: Defaults to `Store.language_pref`.
 
-For any query that doesn't match these templates, a generic text fallback is returned explaining which query types are supported. **No cloud LLM is called** from the Query Router.
+### Supported Query Types & SQL Aggregations
+
+| Query Intent / Metric | Spoken Examples (MR / HI / EN) | SQL Operation | Example Response (Marathi / Hindi) |
+| :--- | :--- | :--- | :--- |
+| **Today's Sales** (`sales_today`) | *"Aaj kiti sale zali?"*<br>*"Aaj ka total sale kitna hua?"*<br>*"How much did I sell today?"* | `SUM(Transaction.total)`, `COUNT(txn_id)` filtered to today (IST) | **MR**: *"आज तुमच्या दुकानात एकूण ₹308.00 ची विक्री झाली आहे (2 बिल्स)."*<br>**HI**: *"आज आपकी दुकान पर कुल ₹308.00 की बिक्री हुई है (2 बिल्स)."* |
+| **Yesterday's Sales** (`sales_yesterday`) | *"Kal kiti sales zali?"*<br>*"Kal kitna sale hua?"* | `SUM(Transaction.total)`, `COUNT(txn_id)` filtered to yesterday | **MR**: *"काल तुमच्या दुकानात एकूण ₹140.00 ची विक्री झाली होती (1 बिल्स)."*<br>**HI**: *"कल आपकी दुकान पर कुल ₹140.00 की बिक्री हुई थी (1 बिल्स)."* |
+| **Last 7 Days' Sales** (`sales_last_7_days`) | *"Ya week madhe kiti sale zali?"*<br>*"Last 7 days madhe kiti sale zali?"*<br>*"Is hafte ka sale?"* | `SUM(Transaction.total)` where `created_at >= now - 7 days` | **MR**: *"मागील ७ दिवसांत तुमच्या दुकानात एकूण ₹476.00 ची विक्री झाली आहे (4 बिल्स)."* |
+| **Month's Sales** (`sales_this_month`) | *"Ya mahinyat kiti sale zali?"*<br>*"Is month kitna business hua?"* | `SUM(Transaction.total)` where `created_at >= 1st of month` | **MR**: *"या महिन्यात तुमच्या दुकानात एकूण ₹476.00 ची विक्री झाली आहे (4 बिल्स)."* |
+| **Number of Bills** (`bill_count`) | *"Aaj kiti bills banle?"*<br>*"Aaj kitne bill bane?"*<br>*"How many bills today?"* | `COUNT(Transaction.txn_id)` filtered to today | **MR**: *"आज तुमच्या दुकानात एकूण 2 बिल्स बनले आहेत (एकूण विक्री ₹308.00)."* |
+| **Average Bill Value** (`average_bill`) | *"Aajcha average bill kiti aahe?"*<br>*"Average bill kitna hai?"*<br>*"What is today's average bill?"* | `SUM(total) / COUNT(txn_id)` filtered to today | **MR**: *"आजचे सरासरी बिल मूल्य (Average Bill) ₹154.00 आहे (एकूण 2 बिल्स)."* |
+| **Best-Selling Product** (`top_selling_product`) | *"Sagleat jast konta product vikla?"*<br>*"Aaj konta product saglyat jast vikla?"*<br>*"Sabse jyada kya bika?"* | Group by `product_id` across `TransactionItem`, order by `SUM(quantity)` desc limit 1 | **MR**: *"एकूण सर्वात जास्त विकले गेलेले प्रॉडक्ट 'Maggi 2-Minute Noodles' आहे (10 packet, एकूण ₹140.00)."* |
+| **Specific Product Sales** (`product_sales`) | *"Maggi kiti vikli?"*<br>*"Fortune oil kitna bika?"*<br>*"Last 7 days madhye Maggi kiti vikli?"* | Matches product via `ProductMatchingEngine` → `SUM(quantity)`, `SUM(line_total)` | **MR**: *"एकूण 'Maggi 2-Minute Noodles' चे एकूण 10 packet विकले गेले (एकूण विक्री ₹140.00)."* |
+| **Low Stock Check** (`low_stock_alert`) | *"Low stock items"*, *"Kam stock"* | Filters active products where `is_low_stock = True` | **MR**: *"तुमच्याकडे हे प्रॉडक्ट्स कमी स्टॉकमध्ये आहेत: Tata Salt (2 packet)."* |
+| **Customer Udhaar** (`udhaar_summary`) | *"Udhaar kitna hai?"*, *"Khata balance"* | Sum of positive balances via `KhataEngine` per customer | **MR**: *"दुकानाचे एकूण बाकी उधारी: Suresh: ₹150.00."* |
+
+### Error Handling & Edge Cases
+- **Product Not Found**: Returns clear feedback in the merchant's language (*"तुमच्या दुकानात 'X' हे प्रॉडक्ट सापडले नाही."* / *"आपकी दुकान में 'X' प्रोडक्ट नहीं मिला."*).
+- **No Sales Recorded**: Graceful zero-state response (*"आज अद्याप कोणतीही विक्री झालेली नाही."*).
+- **Unsupported Questions**: Helpful suggestion prompt in the active language guiding the shopkeeper to valid sales and inventory queries.
+- **Frontend Voice & TTS**: The Assistant UI supports microphone input via the Web Speech API and automatically reads aloud results using browser speech synthesis (`speakText()`) in the selected language.
+

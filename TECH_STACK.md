@@ -83,7 +83,7 @@ SQLAlchemy is an **Object-Relational Mapper (ORM)** for Python. Instead of writi
 - Relationships between tables (e.g., Customer → KhataEntry) are handled as Python object properties.
 
 ### How it's used
-All 15 database tables are defined as Python classes in `app/models/`. Example — the `Product` model:
+All 16 database tables are defined as Python classes in `app/models/`. Example — the `Product` model:
 
 ```python
 class Product(db.Model):
@@ -626,9 +626,11 @@ gunicorn -w 4 run:app   # 4 worker processes
 
 ```
 tests/
+├── test_health.py            ← Health check endpoint verification
 ├── test_auth.py              ← Registration, login, /me endpoint, role checks
 ├── test_billing.py           ← Draft creation, confirm, idempotency, insufficient stock
 ├── test_products.py          ← Catalog CRUD, search, barcode lookup
+├── test_sales_queries.py     ← Multilingual business assistant sales queries
 ├── test_voice_ai.py          ← NLP intent parsing and entity extraction
 ├── test_voice_pipeline.py    ← Full voice billing flow (transcribe → draft)
 ├── test_voice_checkpoints.py ← Referential follow-up ("aur do"), clarification flow
@@ -638,9 +640,9 @@ tests/
 
 ### How to run
 ```powershell
-.\venv\Scripts\pytest          # run all 30+ tests
+.\venv\Scripts\pytest          # run all 33 tests
 .\venv\Scripts\pytest -v       # verbose output (shows each test name)
-.\venv\Scripts\pytest tests/test_billing.py   # run a single file
+.\venv\Scripts\pytest tests/test_sales_queries.py   # run a single file
 ```
 
 The test configuration uses `create_app({'TESTING': True, ...})` to:

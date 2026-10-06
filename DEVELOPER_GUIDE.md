@@ -84,7 +84,7 @@ Auto-seeding also runs at boot if `Product` table is empty and `SEED_DEMO=true`.
 
 ## 5. Test Suite Reference
 
-Vyapar Saarthi AI includes **32 automated tests** using `pytest`.
+Vyapar Saarthi AI includes **33 automated tests** using `pytest`.
 
 ### Run all tests
 ```powershell
@@ -98,7 +98,7 @@ Vyapar Saarthi AI includes **32 automated tests** using `pytest`.
 
 ### Run a single test file
 ```powershell
-.\venv\Scripts\pytest tests/test_billing.py
+.\venv\Scripts\pytest tests/test_sales_queries.py
 ```
 
 ### Test Suite Breakdown
@@ -109,6 +109,7 @@ tests/
 ├── test_auth.py              ← Registration (owner/helper), login, multi-store switching & deletion
 ├── test_billing.py           ← Draft creation, confirm (paid & udhaar), stock checks & idempotency
 ├── test_products.py          ← Product CRUD, barcode & SKU lookup, catalog search
+├── test_sales_queries.py     ← Multilingual business assistant sales queries (Marathi, Hindi, English)
 ├── test_voice_ai.py          ← AI transcript NLP parsing, intent classification
 ├── test_voice_pipeline.py    ← End-to-end voice billing (transcribe → process_bill → draft)
 ├── test_voice_checkpoints.py ← Referential follow-up ("add more"), clarification flow

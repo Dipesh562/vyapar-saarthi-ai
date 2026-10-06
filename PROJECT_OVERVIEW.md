@@ -39,7 +39,7 @@ Merchants can create bills, check stock, and manage customer credit using spoken
 - **Separate Inventory Table**: `Inventory` (one-to-one with `Product`) holds `quantity_on_hand`, `low_stock_threshold`, with computed properties `is_low_stock` and `stock_status` (`"in_stock"`, `"low_stock"`, `"out_of_stock"`).
 - **Movement Log**: Every stock change (`SALE`, `STOCK_IN`, `STOCK_OUT`, `ADJUSTMENT`, `RETURN`) is recorded in `InventoryMovement` with `previous_stock` and `new_stock` for full audit trail.
 - **Manual Adjustments**: Owner-only `PATCH /api/v1/inventory/<product_id>` writes an `InventoryAdjustment` record.
-- **CSV Bulk Pipeline**: Bulk import/export via `/api/v1/inventory/csv`.
+- **CSV Bulk Pipeline**: Bulk catalog preview and import via `/api/v1/products/import/preview` and `/api/v1/products/import/confirm`.
 
 ### 💳 3. Customer Khata (Credit Ledger)
 - **Customer Profile**: Stores `name` and `phone` (per-store, not globally unique). No built-in `credit_limit` or `current_balance` fields — balance is computed dynamically from `KhataEntry` records.
@@ -119,7 +119,7 @@ d:/projectss/Vypaar sarthi/
 │   │   ├── billing.py              # billing_bp — /create, /confirm, DELETE /<id>
 │   │   ├── products.py             # products_bp — CRUD + search
 │   │   ├── inventory.py            # inventory_bp — stock levels, PATCH adjust, history
-│   │   ├── inventory_csv.py        # inventory_csv_bp — CSV upload & export
+│   │   ├── inventory_csv.py        # inventory_csv_bp — /api/v1/products/import (CSV preview & confirm)
 │   │   ├── customers.py            # customers_bp — customer CRUD + khata ledger
 │   │   ├── payments.py             # payments_bp — POST /api/v1/payments (idempotent)
 │   │   ├── receipts.py             # receipts_bp — invoice generation
@@ -134,7 +134,7 @@ d:/projectss/Vypaar sarthi/
 │   │   ├── billing_engine.py       # Draft bill creation, confirm, void
 │   │   ├── khata_engine.py         # Udhaar/Jama ledger & balance computation
 │   │   ├── inventory_engine.py     # Manual stock adjustment logic
-│   │   ├── query_router.py         # BusinessAssistantQueryRouter — local SQL templates only (sales, stock, udhaar)
+│   │   ├── query_router.py         # BusinessAssistantQueryRouter — local SQL templates (multilingual sales, stock, udhaar)
 │   │   ├── stt_client.py           # Speech-to-Text audio transcription
 │   │   ├── voice_feedback.py       # Hinglish spoken confirmation generator
 │   │   └── cart_session.py         # In-memory per-store cart session state
@@ -149,7 +149,7 @@ d:/projectss/Vypaar sarthi/
 │   ├── load_seed.py                # run_seed_in_context() — seeds FMCG demo catalog
 │   ├── seed_inventory.csv          # Source CSV seed data
 │   └── seed_inventory.sql          # Raw SQL seed script
-├── tests/                          # Pytest test suite (30+ tests)
+├── tests/                          # Pytest test suite (33 tests)
 ├── .env                            # Environment variable configuration
 ├── config.py                       # Flask Config class (DB fallback, SEED_DEMO, LLM keys)
 ├── requirements.txt                # Python package dependencies

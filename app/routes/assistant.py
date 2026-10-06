@@ -14,6 +14,7 @@ def query_assistant():
     """
     data = request.get_json() or {}
     question = data.get('question')
+    language = data.get('language')
 
     if not question:
         return jsonify({
@@ -23,5 +24,6 @@ def query_assistant():
             }
         }), 400
 
-    result = BusinessAssistantQueryRouter.answer_query(get_active_store_id(), question)
+    result = BusinessAssistantQueryRouter.answer_query(get_active_store_id(), question, language=language)
     return jsonify(result), 200
+

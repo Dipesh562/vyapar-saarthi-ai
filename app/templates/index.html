@@ -1856,26 +1856,33 @@
                 <div class="card-vs" style="max-width:720px">
                     <div class="card-header-vs" style="flex-direction:column;align-items:flex-start;gap:4px">
                         <h5 class="card-title-vs">AI Business Assistant</h5>
-                        <p style="font-size:13px;color:var(--text-secondary);margin:0">Ask anything about your business in Hindi or English</p>
+                        <p style="font-size:13px;color:var(--text-secondary);margin:0">Ask sales & business queries in Marathi, Hindi, or English</p>
                     </div>
                     <div class="card-body-vs">
                         <div class="chat-suggestions">
-                            <button class="chat-suggest-chip" onclick="askAI('Aaj ka total sale kitna hua?')">Today's sales?</button>
-                            <button class="chat-suggest-chip" onclick="askAI('Kaunsa item low stock mein hai?')">Low stock items</button>
+                            <button class="chat-suggest-chip" onclick="askAI('Aaj kiti sale zali?')">आज किती सेल झाली?</button>
+                            <button class="chat-suggest-chip" onclick="askAI('Aaj ka total sale kitna hua?')">आज कितनी बिक्री हुई?</button>
+                            <button class="chat-suggest-chip" onclick="askAI('Kal kiti sales zali?')">काल किती सेल झाली?</button>
+                            <button class="chat-suggest-chip" onclick="askAI('Aaj kiti bills banle?')">आज किती बिल्स बनले?</button>
+                            <button class="chat-suggest-chip" onclick="askAI('Sagleat jast konta product vikla?')">सर्वात जास्त काय विकले?</button>
+                            <button class="chat-suggest-chip" onclick="askAI('Maggi kiti vikli?')">मॅगी किती विकली?</button>
+                            <button class="chat-suggest-chip" onclick="askAI('Kaunsa item low stock mein hai?')">Low stock</button>
                             <button class="chat-suggest-chip" onclick="askAI('Rahul ka kitna udhaar hai?')">Customer balance</button>
-                            <button class="chat-suggest-chip" onclick="askAI('Is week ki best selling product kaunsi hai?')">Top products</button>
                         </div>
 
                         <div id="chat-window" class="chat-window">
                             <div class="chat-bubble chat-bubble-ai">
-                                🙏 Namaste! Main aapka Vyapar Saarthi AI assistant hoon. Aap mujhse store sales, low stock, ya customer udhaar ke baare mein kuch bhi pooch sakte hain!
+                                🙏 Namaste! Main aapka Vyapar Saarthi AI assistant hoon. Aap mujhse store sales, top products, bill count, low stock ya udhaar ke baare mein Marathi, Hindi ya English mein pooch sakte hain!
                             </div>
                         </div>
 
                         <hr class="divider-vs">
 
                         <div class="input-group-vs">
-                            <input type="text" id="assistant-input-text" class="input-vs" placeholder='Ask e.g. "Aaj ka total sale kitna hua?"' onkeydown="if(event.key==='Enter')submitAssistantQuery()">
+                            <input type="text" id="assistant-input-text" class="input-vs" placeholder='उदा. "आज किती सेल झाली?" / "Aaj ka total sale kitna hua?"' onkeydown="if(event.key==='Enter')submitAssistantQuery()">
+                            <button class="btn-vs-secondary" id="btn-assistant-mic" onclick="toggleAssistantVoiceInput()" title="Speak question" style="border-radius:0;padding:0 14px">
+                                <i class="fa-solid fa-microphone" id="assistant-mic-icon"></i>
+                            </button>
                             <button class="btn-vs-primary" onclick="submitAssistantQuery()" style="border-radius:0 var(--radius-sm) var(--radius-sm) 0">
                                 <i class="fa-solid fa-paper-plane"></i>
                             </button>
@@ -4080,6 +4087,65 @@
             submitAssistantQuery();
         }
 
+        let isAssistantRecording = false;
+        let assistantRecognition = null;
+
+        function toggleAssistantVoiceInput() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                showToast("Voice recognition not supported on this browser.", "warning");
+                return;
+            }
+
+            const micIcon = document.getElementById('assistant-mic-icon');
+            const input = document.getElementById('assistant-input-text');
+
+            if (isAssistantRecording && assistantRecognition) {
+                assistantRecognition.stop();
+                isAssistantRecording = false;
+                if (micIcon) micIcon.style.color = '';
+                return;
+            }
+
+            try {
+                assistantRecognition = new SpeechRecognition();
+                assistantRecognition.lang = selectedSpeechLang || 'hi-IN';
+                assistantRecognition.interimResults = false;
+                assistantRecognition.maxAlternatives = 1;
+
+                assistantRecognition.onstart = () => {
+                    isAssistantRecording = true;
+                    if (micIcon) micIcon.style.color = 'var(--red)';
+                    showToast(`Listening in ${langLabels[selectedSpeechLang] || selectedSpeechLang}...`, 'info');
+                };
+
+                assistantRecognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    if (transcript && input) {
+                        input.value = transcript;
+                        submitAssistantQuery();
+                    }
+                };
+
+                assistantRecognition.onerror = (event) => {
+                    console.warn('Assistant speech error:', event.error);
+                    isAssistantRecording = false;
+                    if (micIcon) micIcon.style.color = '';
+                };
+
+                assistantRecognition.onend = () => {
+                    isAssistantRecording = false;
+                    if (micIcon) micIcon.style.color = '';
+                };
+
+                assistantRecognition.start();
+            } catch(e) {
+                console.warn('Error starting assistant recognition:', e);
+                isAssistantRecording = false;
+                if (micIcon) micIcon.style.color = '';
+            }
+        }
+
         async function submitAssistantQuery() {
             const input = document.getElementById('assistant-input-text');
             const q = input.value.trim();
@@ -4099,7 +4165,10 @@
                 const res = await fetch('/api/v1/assistant/query', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ question: q })
+                    body: JSON.stringify({ 
+                        question: q,
+                        language: selectedSpeechLang || 'hi-IN'
+                    })
                 });
 
                 const data = await res.json();
@@ -4108,6 +4177,10 @@
 
                 chat.innerHTML += `<div class="chat-bubble chat-bubble-ai">${data.answer_text}</div>`;
                 chat.scrollTop = chat.scrollHeight;
+
+                if (data.answer_text) {
+                    speakText(data.answer_text);
+                }
             } catch (e) {
                 console.error(e);
                 const loadingEl = document.getElementById(loadingId);
